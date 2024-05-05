@@ -1,0 +1,6 @@
+@HLTVScrapperAPI_HostAddress = http://localhost:5128
+
+GET {{HLTVScrapperAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
