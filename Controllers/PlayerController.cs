@@ -34,7 +34,7 @@ namespace HLTVScrapperAPI.Controllers
             using (var driver = UndetectedChromeDriver.Create(
             driverExecutablePath: undetectedChromeDriverPath))
             {
-                driver.GoToUrl("https://www.hltv.org");
+                driver.GoToUrl("https://www.hltv.org/stats");
                 Thread.Sleep(10000);
             }
         }

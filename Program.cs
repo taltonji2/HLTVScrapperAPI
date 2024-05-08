@@ -1,3 +1,5 @@
+using HLTVScrapperAPI.Utility;
+
 namespace HLTVScrapperAPI
 {
     public class Program
@@ -18,8 +20,19 @@ namespace HLTVScrapperAPI
 
             app.UseAuthorization();
 
-
             app.MapControllers();
+
+
+            // End leftover processes
+            AppDomain.CurrentDomain.ProcessExit += (sender, eventArgs) =>
+            {
+                WebAutomation.CleanupProcesses();
+            };
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+            {
+                WebAutomation.CleanupProcesses();
+            };
 
             app.Run();
         }
