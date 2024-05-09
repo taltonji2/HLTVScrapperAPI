@@ -15,28 +15,15 @@ namespace HLTVScrapperAPI.Controllers
             _logger = logger;
         }
 
-        [HttpGet("/api/players")]
-        public IEnumerable<Player> GetPlayer()
-        {
-            return Enumerable.Range(1, 5).Select(index => new Player
-            {
-                Name = $"{index}",
-            })
-            .ToArray();
-        }
+        //[HttpGet("/api/players")]
+        //public IEnumerable<Player> GetPlayer()
+        //{
+        //}
 
-        [HttpGet("/api/test")]
+        [HttpGet("/api/player")]
         public void GetClickableElement()
         {
-            string hltvUrl = "https://www.hltv.org";
-            const string undetectedChromeDriverPath = @"C:/Users/Timothy/source/repos/HLTVScrapperAPI/bin/ChromeDriver/chromedriver.exe";
-          
-            using (var driver = UndetectedChromeDriver.Create(
-            driverExecutablePath: undetectedChromeDriverPath))
-            {
-                driver.GoToUrl("https://www.hltv.org/stats");
-                Thread.Sleep(10000);
-            }
+            Services.PlayerScraper.ScrapePlayerStats();
         }
     }
 }
