@@ -168,8 +168,8 @@ namespace HLTVScrapperAPI.Services
             System.Collections.ObjectModel.ReadOnlyCollection<IWebElement> weaponStatRowElements = weaponStatsBox.FindElements(By.ClassName("stats-row"));
             //GetStatRowData(weaponStatRowElements, weaponStats);
 
-            IWebElement matchTab = driver.FindElement(By.CssSelector("div['class=tabs standard-box']")).FindElement(By.LinkText("Matches"));
-            matchTab.Click();
+            System.Collections.ObjectModel.ReadOnlyCollection<IWebElement> matchElements = driver.FindElements(By.LinkText("Matches"));
+            matchElements[1].Click();
 
             Thread.Sleep(2000);
 
