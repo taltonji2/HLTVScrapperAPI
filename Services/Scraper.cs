@@ -50,25 +50,6 @@ namespace HLTVScrapperAPI.Services
             }
         }
         
-        //TODO: implement
-        //private static void BypassCloudflare(IWebDriver driver)
-        //{
-        //    IWebDriver driver = Scraper.CreateWebDriver();
-        //    Thread.Sleep(TimeSpan.FromSeconds(3));
-
-        //    driver.SwitchTo().Window(driver.WindowHandles[0]);
-
-        //    driver.Close();
-
-        //    driver.SwitchTo().Window(driver.WindowHandles[0]);
-
-        //    driver.SwitchTo().Frame(0);
-
-        //    IWebElement button = driver.FindElement(By.CssSelector("#challenge-stage"));
-            
-        //    button.Click();
-        //}
-
         private static Boolean IsElementClickable(WebElement element)
         {
             if (element == null) throw new NullReferenceException(nameof(element));
