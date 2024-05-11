@@ -20,7 +20,7 @@ To get started with using the HLTV.org Scraper API, follow these steps:
 
 #### `GET /players`
 
-Retrieve a list of professional Counter Strike players.
+Retrieve a list of professional Counter-Strike players.
 
 Parameters:
 
