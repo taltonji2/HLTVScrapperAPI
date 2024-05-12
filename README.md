@@ -1,10 +1,10 @@
 # HLTV.org Scraper API
 
-This C# API allows you to scrape data from HLTV.org for professional CS:GO player and team data. It provides filter controls to view data for specific timeframes.
+This C# API allows you to scrape data from HLTV.org for professional Counter-Strike player and team data. It provides filter controls to view data for specific timeframes.
 
 ## Overview
 
-The HLTV.org Scraper API is designed to retrieve data from HLTV.org, a leading CS:GO esports website, and provide it in a structured format for analysis and integration into other applications.
+The HLTV.org Scraper API is designed to retrieve data from HLTV.org, the leading Counter-Strike esports website, and provide it in a structured format for analysis and integration into other applications.
 
 ## Getting Started
 
@@ -20,7 +20,7 @@ To get started with using the HLTV.org Scraper API, follow these steps:
 
 #### `GET /players`
 
-Retrieve a list of professional CS:GO players.
+Retrieve a list of professional Counter-Strike players.
 
 Parameters:
 
