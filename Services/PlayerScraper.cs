@@ -2,13 +2,16 @@
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
+using HLTVScrapperAPI.Models;
 
 namespace HLTVScrapperAPI.Services
 {
     public class PlayerScraper : Scraper
     {
-        private static void ScrapePlayerStatsAction(IWebDriver driver)
+        private static NestedDictionary ScrapePlayerStatsAction(IWebDriver driver)
         {
+            NestedDictionary playerStatsDict = new NestedDictionary();
+
             IWebElement searchInput = driver.FindElement(By.CssSelector
             (
                 "input[class='search-input navsearchinput tt-input']"
@@ -17,118 +20,90 @@ namespace HLTVScrapperAPI.Services
             searchInput.Click();
             searchInput.SendKeys("s1mple");
             
-            Thread.Sleep(TimeSpan.FromSeconds(2));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
             
             IWebElement playerItem = driver.FindElement(By.CssSelector
             (
-                "div[class='box compact player hoverable stats-search-result']"  //saw fail surprisingly
+                "div[class='box compact player hoverable stats-search-result']"  // saw fail surprisingly
             ));
             
             playerItem.Click();
 
+            // nickName, country, fullName, teamName, age
             IWebElement nickNameElement = driver.FindElement(By.ClassName("summaryNickname"));
             string nickName = nickNameElement.Text;
-
+            playerStatsDict.Add("nickName", nickName);
             IWebElement summaryElement = driver.FindElement(By.ClassName("summaryInfoContainer"));
-
             string country = summaryElement.FindElement(By.ClassName("summaryRealname")).FindElement(By.ClassName("flag")).GetAttribute("title").ToString();
-            Debug.WriteLine(country);
-
+            playerStatsDict.Add("county", country);
             string fullName = summaryElement.FindElement(By.ClassName("summaryRealname")).FindElement(By.ClassName("text-ellipsis")).Text;
-            Debug.WriteLine(fullName);
-
+            playerStatsDict.Add("fullName", fullName);
             string teamName = summaryElement.FindElement(By.ClassName("SummaryTeamname")).FindElement(By.ClassName("text-ellipsis")).Text;
-            Debug.WriteLine(teamName);
-
+            playerStatsDict.Add("teamName", teamName);
             string age = summaryElement.FindElement(By.ClassName("summaryPlayerAge")).Text;
-            Debug.WriteLine(age);
+            playerStatsDict.Add("age", age);
 
+            // 
             IWebElement summaryBreakdownElement = driver.FindElement(By.ClassName("summaryBreakdownContainer"));
-
             ReadOnlyCollection<IWebElement> summaryStatBreakdownElements = summaryBreakdownElement.FindElements(By.ClassName("summaryStatBreakdown"));
-
-            Dictionary<string, (string value, string description)> playerSummaryStatistics = new Dictionary<string, (string, string)>();
-
             foreach (IWebElement breakdownElement in summaryStatBreakdownElements)
             {
                 IWebElement nameElement = breakdownElement.FindElement(By.ClassName("summaryStatBreakdownSubHeader"));
                 string statName = nameElement.Text;
-
                 IWebElement valueElement = breakdownElement.FindElement(By.ClassName("summaryStatBreakdownData")).FindElement(By.ClassName("summaryStatBreakdownDataValue"));
                 string value = valueElement.Text;
-
                 IWebElement descriptionElement = breakdownElement.FindElement(By.ClassName("summaryStatBreakdownDescription"));
                 string description = descriptionElement.Text;
-
-                playerSummaryStatistics.Add(statName, (value, description));
-            }
-
-            foreach(var item in  playerSummaryStatistics) 
-            {
-                Debug.WriteLine(item);
+                playerStatsDict.Add(statName, $"{value}_{description}");
             }
 
             ReadOnlyCollection<IWebElement> statRowElements = driver.FindElements(By.ClassName("stats-row"));
-
             Dictionary<string, string> playerStatistics = new Dictionary<string, string>();
-
             PopulateStatsFromSpanLists(statRowElements, playerStatistics);
-
-            foreach(var item in playerStatistics)
-            {
-                Debug.WriteLine(item);
-            }
-
-            Dictionary<string, string> playerFeaturedRatings = new Dictionary<string, string>();
+            playerStatsDict.Add("general", playerStatistics);
 
             IWebElement featuredRatingGrid = driver.FindElement(By.ClassName("featured-ratings-container")).FindElement(By.ClassName("g-grid"));
-
             ReadOnlyCollection<IWebElement> featuredRatingStats = featuredRatingGrid.FindElements(By.ClassName("col-custom"));
-
             foreach (IWebElement stat in featuredRatingStats)
             {
                 IWebElement ratingBreakdown = stat.FindElement(By.ClassName("rating-breakdown"));
-                
                 string ratingValue = ratingBreakdown.FindElement(By.ClassName("rating-value")).Text;
                 string ratingDescription = ratingBreakdown.FindElement(By.ClassName("rating-description")).Text;
                 string ratingMaps = ratingBreakdown.FindElement(By.ClassName("rating-maps")).Text;
-                ratingDescription = $"{ratingDescription}_{ratingMaps}";
-                playerFeaturedRatings.Add(ratingDescription, ratingValue);
-            }
-
-            foreach(var item in playerFeaturedRatings) 
-            {
-                Debug.WriteLine(item);
+                playerStatsDict.Add($"RATING 2.0 {ratingDescription}", $"{ratingValue}_{ratingMaps}");
             }
 
             //Navigate to Individual tab
             IWebElement individualTab = driver.FindElement(By.LinkText("Individual"));
-            
             individualTab.Click();
 
-            Thread.Sleep(2000);
-
-            Dictionary<string, string> overallStats = new Dictionary<string, string>();
-            Dictionary<string, string> roundStats = new Dictionary<string, string>();
-            Dictionary<string, string> openingStats = new Dictionary<string, string>();
-            Dictionary<string, string> weaponStats = new Dictionary<string, string>();
+            Thread.Sleep(TimeSpan.FromSeconds(1));
 
             ReadOnlyCollection<IWebElement> standardBoxElements = driver.FindElements(By.XPath("//*[@class='standard-box']"));
 
             IWebElement overallStatsBox = standardBoxElements[0];
-            IWebElement openingStatsBox = standardBoxElements[1];
-            IWebElement roundStatsBox = standardBoxElements[2];
-            IWebElement weaponStatsBox = standardBoxElements[3];
-
             ReadOnlyCollection<IWebElement> overallStatRowElements = overallStatsBox.FindElements(By.ClassName("stats-row"));
-            ReadOnlyCollection<IWebElement> openingStatRowElements = openingStatsBox.FindElements(By.ClassName("stats-row"));
-            ReadOnlyCollection<IWebElement> roundStatRowElements = roundStatsBox.FindElements(By.ClassName("stats-row"));
-            ReadOnlyCollection<IWebElement> weaponStatRowElements = weaponStatsBox.FindElements(By.ClassName("stats-row"));
-
+            Dictionary<string, string> overallStats = new Dictionary<string, string>();
             PopulateStatsFromSpanLists(overallStatRowElements, overallStats);
+            playerStatsDict.Add("overall", overallStats);
+
+            IWebElement openingStatsBox = standardBoxElements[1];
+            ReadOnlyCollection<IWebElement> openingStatRowElements = openingStatsBox.FindElements(By.ClassName("stats-row"));
+            Dictionary<string, string> roundStats = new Dictionary<string, string>();
             PopulateStatsFromSpanLists(openingStatRowElements, roundStats);
+            playerStatsDict.Add("round", roundStats);
+
+            IWebElement roundStatsBox = standardBoxElements[2];
+            ReadOnlyCollection<IWebElement> roundStatRowElements = roundStatsBox.FindElements(By.ClassName("stats-row"));
+            Dictionary<string, string> openingStats = new Dictionary<string, string>();
             PopulateStatsFromSpanLists(roundStatRowElements, openingStats);
+            playerStatsDict.Add("opening", openingStats);
+
+            IWebElement weaponStatsBox = standardBoxElements[3];
+            ReadOnlyCollection<IWebElement> weaponStatRowElements = weaponStatsBox.FindElements(By.ClassName("stats-row"));
+            Dictionary<string, string> weaponStats = new Dictionary<string, string>();
             PopulateStatsFromSpanLists(weaponStatRowElements, weaponStats);
+            playerStatsDict.Add("weapon", weaponStats);
 
             void PopulateStatsFromSpanLists(ReadOnlyCollection<IWebElement> webElementArray, Dictionary<string, string> stat)
             {
@@ -152,28 +127,18 @@ namespace HLTVScrapperAPI.Services
                 }
             }
 
-            foreach (var item in overallStats)
-            {
-                Debug.WriteLine(item);
-            }
-
-            foreach (var item in roundStats)
-            {
-                Debug.WriteLine(item);
-            }
-            foreach (var item in openingStats)
-            {
-                Debug.WriteLine(item);
-            }
-            foreach (var item in weaponStats)
-            {
-                Debug.WriteLine(item);
-            }
+            return playerStatsDict;
         }
 
-        public static void ScrapePlayerStats()
+        public static NestedDictionary ScrapePlayerStats()
         {
-            Scrape(route: "stats", action: ScrapePlayerStatsAction);
+            foreach (var process in Process.GetProcessesByName("chrome"))
+            {
+                process.Kill();
+                Debug.WriteLine($"Killed process {process.Id}: {process.ProcessName}");
+            }
+
+            return Scrape(route: "stats", action: ScrapePlayerStatsAction);
         }
     }
 }

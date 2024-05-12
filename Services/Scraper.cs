@@ -1,6 +1,8 @@
-﻿using OpenQA.Selenium;
+﻿using HLTVScrapperAPI.Models;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumUndetectedChromeDriver;
+using System.Diagnostics;
 
 namespace HLTVScrapperAPI.Services
 {
@@ -16,9 +18,9 @@ namespace HLTVScrapperAPI.Services
             return driver;
         }
         
-        public delegate void ScrapeAction(IWebDriver driver);
+        public delegate NestedDictionary ScrapeAction(IWebDriver driver); //TODO: Enhance with filter for time-frame of last month three months etc
 
-        public static void Scrape(string route = "", ScrapeAction action = null)
+        public static NestedDictionary Scrape(string route = "", ScrapeAction action = null)
         {
             using (IWebDriver driver = CreateWebDriver())
             {
@@ -37,11 +39,29 @@ namespace HLTVScrapperAPI.Services
                     
                     cybotCookieDialogDeclineElement.Click();
                     
-                    Thread.Sleep(TimeSpan.FromSeconds(3));
+                    Thread.Sleep(TimeSpan.FromSeconds(2));
 
-                    action?.Invoke(driver);
+                    try
+                    {
+                        return action?.Invoke(driver);
+                    }
+                    catch (Exception ex) 
+                    {
+                        throw ex;
+                    }
+                    finally
+                    {
+                        driver.Close();
+                        driver.Quit();
+                        driver.Dispose();
 
-                    Thread.Sleep(TimeSpan.FromSeconds(3));
+                        IEnumerable<int> chromePids = Process.GetProcessesByName("chrome").Select(p => p.Id);
+                        foreach (int pid in chromePids)
+                        {
+                            Process chromeProcess = Process.GetProcessById(pid);
+                            if (chromeProcess != null) Process.GetProcessById(pid).Kill();
+                        }
+                    }
                 }
                 catch (Exception ex) 
                 {

@@ -1,4 +1,5 @@
 using HLTVScrapperAPI.Utility;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace HLTVScrapperAPI
 {
@@ -8,19 +9,27 @@ namespace HLTVScrapperAPI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
 
-            var app = builder.Build();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Your API Name", Version = "v1" });
+            });
 
-            // Configure the HTTP request pipeline.
+            var app = builder.Build();
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API Name V1");
+            });
 
             app.Run();
         }

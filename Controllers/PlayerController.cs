@@ -1,6 +1,8 @@
 using HLTVScrapperAPI.Models;
+using HLTVScrapperAPI.Models.ScrapeRequest;
 using Microsoft.AspNetCore.Mvc;
 using SeleniumUndetectedChromeDriver;
+using System.Diagnostics;
 
 namespace HLTVScrapperAPI.Controllers
 {
@@ -15,15 +17,14 @@ namespace HLTVScrapperAPI.Controllers
             _logger = logger;
         }
 
-        //[HttpGet("/api/players")]
-        //public IEnumerable<Player> GetPlayer()
-        //{
-        //}
-
-        [HttpGet("/api/player")]
-        public void GetClickableElement()
+        [HttpPost("/api/player")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        [Produces("application/json")]
+        public IActionResult ScrapePlayer([FromBody] PlayerScrapeRequest request)
         {
-            Services.PlayerScraper.ScrapePlayerStats();
+            var dict = Services.PlayerScraper.ScrapePlayerStats();
+            return Ok(dict);
         }
     }
 }
