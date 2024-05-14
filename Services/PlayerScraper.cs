@@ -3,13 +3,32 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using HLTVScrapperAPI.Models;
+using OpenQA.Selenium.Support.UI;
 
 namespace HLTVScrapperAPI.Services
 {
     public class PlayerScraper : Scraper
     {
-        private static NestedDictionary ScrapePlayerStatsAction(IWebDriver driver)
+        public PlayerScraper() : base() {}  
+
+        //TODO: Enhance with filter for time-frame of last month three months etc
+        public NestedDictionary Scrape(ScrapeRequest request)
         {
+            try
+            {
+                driver.Navigate().GoToUrl($"https://www.hltv.org/stats");
+
+                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
+
+                IWebElement cybotCookieDialogDeclineElement = wait.Until(d =>
+                {
+                    Thread.Sleep(TimeSpan.FromSeconds(1));
+                    return d.FindElement(By.Id("CybotCookiebotDialogBodyButtonDecline"));
+                });
+
+                cybotCookieDialogDeclineElement.Click();
+                Thread.Sleep(TimeSpan.FromSeconds(2));
+
             NestedDictionary playerStatsDict = new NestedDictionary();
 
             IWebElement searchInput = driver.FindElement(By.CssSelector
@@ -127,18 +146,20 @@ namespace HLTVScrapperAPI.Services
                 }
             }
 
+            playerStatsDict.Print();
+
             return playerStatsDict;
-        }
 
-        public static NestedDictionary ScrapePlayerStats()
-        {
-            foreach (var process in Process.GetProcessesByName("chrome"))
-            {
-                process.Kill();
-                Debug.WriteLine($"Killed process {process.Id}: {process.ProcessName}");
             }
-
-            return Scrape(route: "stats", action: ScrapePlayerStatsAction);
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                this.Dispose();
+               
+            }
         }
     }
 }

@@ -1,8 +1,6 @@
 using HLTVScrapperAPI.Models;
-using HLTVScrapperAPI.Models.ScrapeRequest;
+using HLTVScrapperAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-using SeleniumUndetectedChromeDriver;
-using System.Diagnostics;
 
 namespace HLTVScrapperAPI.Controllers
 {
@@ -23,7 +21,8 @@ namespace HLTVScrapperAPI.Controllers
         [Produces("application/json")]
         public IActionResult ScrapePlayer([FromBody] PlayerScrapeRequest request)
         {
-            var dict = Services.PlayerScraper.ScrapePlayerStats();
+            PlayerScraper playerScraper = new PlayerScraper();
+            var dict = playerScraper.Scrape(request: request);
             return Ok(dict);
         }
     }

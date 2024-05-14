@@ -1,5 +1,4 @@
-using HLTVScrapperAPI.Utility;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.OpenApi.Models;
 
 namespace HLTVScrapperAPI
 {
@@ -13,7 +12,23 @@ namespace HLTVScrapperAPI
 
             builder.Services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Your API Name", Version = "v1" });
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
+                {
+                    Version = "v1",
+                    Title = "HLTV Scraper API",
+                    Description = "An ASP.NET Core Web API for scraping player and team data from HLTV.org",
+                    TermsOfService = new Uri("https://example.com/terms"), // TODO: implement
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Contact",
+                        Url = new Uri("https://github.com/taltonji2")
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Example License",
+                        Url = new Uri("https://example.com/license") // TODO: implement
+                    }
+                });
             });
 
             var app = builder.Build();
