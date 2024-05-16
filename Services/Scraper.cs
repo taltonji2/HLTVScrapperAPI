@@ -21,7 +21,8 @@ namespace HLTVScrapperAPI.Services
             driver.Quit();
             driver.Dispose();
 
-            IEnumerable<int> chromePids = Process.GetProcessesByName("chrome").Select(p => p.Id); //TODO: keep track of created processes and only kill pid that were created
+            //TODO: keep track of created processes and only kill pid that were created
+            IEnumerable<int> chromePids = Process.GetProcessesByName("chrome").Select(p => p.Id);
             foreach (int pid in chromePids)
             {
                 Process chromeProcess = Process.GetProcessById(pid);

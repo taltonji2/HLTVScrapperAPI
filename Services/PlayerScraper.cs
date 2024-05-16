@@ -17,20 +17,20 @@ namespace HLTVScrapperAPI.Services
             try
             {
                 driver.Navigate().GoToUrl($"https://www.hltv.org/stats");
-
+            
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
-
+            
                 IWebElement cybotCookieDialogDeclineElement = wait.Until(d =>
                 {
                     Thread.Sleep(TimeSpan.FromSeconds(1));
                     return d.FindElement(By.Id("CybotCookiebotDialogBodyButtonDecline"));
                 });
-
+            
                 cybotCookieDialogDeclineElement.Click();
                 Thread.Sleep(TimeSpan.FromSeconds(2));
-
+            
             NestedDictionary playerStatsDict = new NestedDictionary();
-
+            
             IWebElement searchInput = driver.FindElement(By.CssSelector
             (
                 "input[class='search-input navsearchinput tt-input']"
@@ -62,7 +62,6 @@ namespace HLTVScrapperAPI.Services
             string age = summaryElement.FindElement(By.ClassName("summaryPlayerAge")).Text;
             playerStatsDict.Add("age", age);
 
-            // 
             IWebElement summaryBreakdownElement = driver.FindElement(By.ClassName("summaryBreakdownContainer"));
             ReadOnlyCollection<IWebElement> summaryStatBreakdownElements = summaryBreakdownElement.FindElements(By.ClassName("summaryStatBreakdown"));
             foreach (IWebElement breakdownElement in summaryStatBreakdownElements)
@@ -77,19 +76,21 @@ namespace HLTVScrapperAPI.Services
             }
 
             ReadOnlyCollection<IWebElement> statRowElements = driver.FindElements(By.ClassName("stats-row"));
-            Dictionary<string, string> playerStatistics = new Dictionary<string, string>();
-            PopulateStatsFromSpanLists(statRowElements, playerStatistics);
-            playerStatsDict.Add("general", playerStatistics);
+            Dictionary<string, string> generalStatistics = new Dictionary<string, string>();
+            PopulateStatsFromSpanLists(statRowElements, generalStatistics);
+            playerStatsDict.Add("general", generalStatistics);
 
             IWebElement featuredRatingGrid = driver.FindElement(By.ClassName("featured-ratings-container")).FindElement(By.ClassName("g-grid"));
             ReadOnlyCollection<IWebElement> featuredRatingStats = featuredRatingGrid.FindElements(By.ClassName("col-custom"));
+            Dictionary<string, string> ratingStatistics = new Dictionary<string, string>();
+            playerStatsDict.Add("rating", ratingStatistics);
             foreach (IWebElement stat in featuredRatingStats)
             {
                 IWebElement ratingBreakdown = stat.FindElement(By.ClassName("rating-breakdown"));
                 string ratingValue = ratingBreakdown.FindElement(By.ClassName("rating-value")).Text;
                 string ratingDescription = ratingBreakdown.FindElement(By.ClassName("rating-description")).Text;
                 string ratingMaps = ratingBreakdown.FindElement(By.ClassName("rating-maps")).Text;
-                playerStatsDict.Add($"RATING 2.0 {ratingDescription}", $"{ratingValue}_{ratingMaps}");
+                ratingStatistics.Add($"RATING 2.0 {ratingDescription}", $"{ratingValue}_{ratingMaps}");
             }
 
             //Navigate to Individual tab
@@ -146,10 +147,8 @@ namespace HLTVScrapperAPI.Services
                 }
             }
 
-            playerStatsDict.Print();
-
             return playerStatsDict;
-
+            
             }
             catch (Exception ex)
             {
@@ -158,7 +157,6 @@ namespace HLTVScrapperAPI.Services
             finally
             {
                 this.Dispose();
-               
             }
         }
     }
