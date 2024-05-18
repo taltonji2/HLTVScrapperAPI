@@ -28,10 +28,8 @@ namespace HLTVScrapperAPI.Controllers
             var playerDict = playerScraper.Scrape(request: request);
             string prettyJson = JsonConvert.SerializeObject(playerDict, Formatting.Indented);
             var player = PlayerMapper.MapJsonToPlayer(prettyJson);
-
-            Debug.WriteLine(prettyJson);
-
-            return Ok(playerDict);
+            var json = JsonConvert.SerializeObject(player);
+            return Ok(json);
         }
     }
 }
