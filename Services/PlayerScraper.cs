@@ -1,5 +1,4 @@
 ﻿using OpenQA.Selenium;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using HLTVScrapperAPI.Models;

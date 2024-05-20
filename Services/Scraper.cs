@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using SeleniumUndetectedChromeDriver;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace HLTVScrapperAPI.Services
 {
@@ -11,7 +12,11 @@ namespace HLTVScrapperAPI.Services
 
         public Scraper()
         {
-            string undetectedChromeDriverPath = @"C:/Users/Timothy/source/repos/HLTVScrapperAPI/bin/ChromeDriver/chromedriver.exe";
+            string undetectedChromeDriverPath = "";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                undetectedChromeDriverPath = @"C:/Users/Timothy/source/repos/HLTVScrapperAPI/bin/ChromeDriver/chromedriver.exe";
+            else 
+                undetectedChromeDriverPath = @"bin/ChromeDriver/chromedriver";
             driver = UndetectedChromeDriver.Create(driverExecutablePath: undetectedChromeDriverPath);
         }
 
