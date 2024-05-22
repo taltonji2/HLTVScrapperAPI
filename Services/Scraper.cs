@@ -7,7 +7,6 @@ namespace HLTVScrapperAPI.Services
 {
     public class Scraper
     {
-
         protected IWebDriver driver { get; set; }
 
         public Scraper()
@@ -19,7 +18,6 @@ namespace HLTVScrapperAPI.Services
                 undetectedChromeDriverPath = @"bin/ChromeDriver/chromedriver";
             driver = UndetectedChromeDriver.Create(driverExecutablePath: undetectedChromeDriverPath);
         }
-
         protected void Dispose() 
         {
             driver.Close();

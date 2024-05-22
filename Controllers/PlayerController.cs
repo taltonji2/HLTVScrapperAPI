@@ -2,8 +2,6 @@ using HLTVScrapperAPI.Models;
 using HLTVScrapperAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using SeleniumUndetectedChromeDriver;
-using System.Diagnostics;
 
 namespace HLTVScrapperAPI.Controllers
 {

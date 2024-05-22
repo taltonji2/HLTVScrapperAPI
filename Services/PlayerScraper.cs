@@ -149,9 +149,9 @@ namespace HLTVScrapperAPI.Services
             return playerStatsDict;
             
             }
-            catch (Exception ex)
+            catch
             {
-                throw ex;
+                throw;
             }
             finally
             {
