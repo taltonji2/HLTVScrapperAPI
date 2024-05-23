@@ -24,7 +24,7 @@ namespace HLTVScrapperAPI.Services
                     Thread.Sleep(TimeSpan.FromSeconds(1));
                     return d.FindElement(By.Id("CybotCookiebotDialogBodyButtonDecline"));
                 });
-            
+
                 cybotCookieDialogDeclineElement.Click();
                 Thread.Sleep(TimeSpan.FromSeconds(2));
             
