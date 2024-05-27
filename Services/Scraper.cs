@@ -20,18 +20,27 @@ namespace HLTVScrapperAPI.Services
         }
         protected void Dispose() 
         {
-            driver.Close();
-            driver.Quit();
-            driver.Dispose();
-
-            //TODO: keep track of created processes and only kill pid that were created
-            IEnumerable<int> chromePids = Process.GetProcessesByName("chrome").Select(p => p.Id);
-            foreach (int pid in chromePids)
+            try
             {
-                Process chromeProcess = Process.GetProcessById(pid);
-                if (chromeProcess != null) Process.GetProcessById(pid).Kill();
-                Debug.WriteLine($"Killed process {pid}");
+                driver.Close();
+                driver.Quit();
+                driver.Dispose();
+
+                //TODO: keep track of created processes and only kill pid that were created
+                IEnumerable<int> chromePids = Process.GetProcessesByName("chrome").Select(p => p.Id);
+                foreach (int pid in chromePids)
+                {
+                    Process chromeProcess = Process.GetProcessById(pid);
+                    if (chromeProcess != null) Process.GetProcessById(pid).Kill();
+                    Debug.WriteLine($"Killed process {pid}");
+                }
+                Debug.WriteLine("Successfully disposed chromedriver");
+            } 
+            catch (Exception e)
+            {
+                Debug.WriteLine($"Error occured while disposing chromedriver {e.Message}");
             }
+           
         }
     }
 }
