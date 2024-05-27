@@ -23,9 +23,7 @@ namespace HLTVScrapperAPI.Controllers
         public IActionResult ScrapePlayer([FromBody] PlayerScrapeRequest request)
         {
             PlayerScraper playerScraper = new PlayerScraper();
-            var playerDict = playerScraper.Scrape(request: request);
-            string prettyJson = JsonConvert.SerializeObject(playerDict, Formatting.Indented);
-            var player = PlayerMapper.MapJsonToPlayer(prettyJson);
+            Player player = playerScraper.Scrape(request: request);
             var json = JsonConvert.SerializeObject(player);
             return Ok(json);
         }

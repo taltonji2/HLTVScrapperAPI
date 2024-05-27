@@ -11,7 +11,7 @@ namespace HLTVScrapperAPI.Services
     {
         public PlayerScraper() : base() {}
 
-        void PopulateStatsFromSpanLists(ReadOnlyCollection<IWebElement> webElementArray, Dictionary<string, string> stat)
+        void PopulateStatsFromSpanLists(ReadOnlyCollection<IWebElement> webElementArray, Player player)
         {
             foreach (IWebElement webElement in webElementArray)
             {
@@ -29,7 +29,48 @@ namespace HLTVScrapperAPI.Services
                             (statName, statValue) = (statValue, statName);
                         }
 
-                        stat.Add(statName, statValue);
+                        switch (statName)
+                        {
+                            case "Total kills":
+                                player.general.totalKills = statValue;
+                                break;
+                            case "Headshot %":
+                                player.general.headshotPercentage = statValue;
+                                break;
+                            case "Total deaths":
+                                player.general.totalDeaths = statValue;
+                                break;
+                            case "K/D Ratio":
+                                player.general.kD = statValue;
+                                break;
+                            case "Damage / Round":
+                                player.general.dmgPerRound = statValue;
+                                break;
+                            case "Grenade dmg / Round":
+                                player.general.grenadeDmgPerRound = statValue;
+                                break;
+                            case "Maps played":
+                                player.general.mapsPlayed = statValue;
+                                break;  
+                            case "Rounds played":
+                                player.general.roundsPlayed = statValue;
+                                break;  
+                            case "Kills / round":
+                                player.general.killsPerRound = statValue;
+                                break;
+                            case "Assists / round":
+                                player.general.assistsPerRound = statValue;
+                                break;
+                            case "Deaths / round":
+                                player.general.deathsPerRound = statValue;
+                                break;
+                            case "Saved by teammate / round":
+                                player.general.savedPerRound = statValue;
+                                break;
+                            case "Saved teammates / round":
+                                player.general.savesPerRound = statValue;
+                                break;
+                        }
                     }
                 } 
                 catch (NoSuchElementException e)
@@ -39,7 +80,7 @@ namespace HLTVScrapperAPI.Services
             }
         }
         //TODO: Enhance with filter for time-frame of last month three months etc
-        public NestedDictionary Scrape(ScrapeRequest request)
+        public Player Scrape(ScrapeRequest request)
         {
             try
             {
@@ -63,14 +104,11 @@ namespace HLTVScrapperAPI.Services
                     Debug.WriteLine($"Error: {e.Message}");
                 }
 
-                NestedDictionary playerStatsDict = new NestedDictionary();
+                Player player = new Player();
                 
                 try
                 {
-                    IWebElement searchInput = driver.FindElement(By.CssSelector
-                    (
-                        "input[class='search-input navsearchinput tt-input']"
-                    ));
+                    IWebElement searchInput = driver.FindElement(By.CssSelector("input[class='search-input navsearchinput tt-input']"));
                     searchInput.Click();
                     searchInput.SendKeys("s1mple");
                     Thread.Sleep(TimeSpan.FromSeconds(1));
@@ -82,10 +120,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    IWebElement playerItem = driver.FindElement(By.CssSelector
-                    (
-                    "div[class='box compact player hoverable stats-search-result']"  // saw fail surprisingly
-                    ));
+                    IWebElement playerItem = driver.FindElement(By.CssSelector("div[class='box compact player hoverable stats-search-result']"));
                     playerItem.Click();
                 } 
                 catch (NoSuchElementException e)
@@ -98,7 +133,7 @@ namespace HLTVScrapperAPI.Services
                 {
                     IWebElement nickNameElement = driver.FindElement(By.ClassName("summaryNickname"));
                     string nickName = nickNameElement.Text;
-                    playerStatsDict.Add("nickName", nickName);
+                    player.nickName = nickName;
                 } 
                 catch (NoSuchElementException e)
                 {
@@ -109,13 +144,13 @@ namespace HLTVScrapperAPI.Services
                 {
                     IWebElement summaryElement = driver.FindElement(By.ClassName("summaryInfoContainer"));
                     string country = summaryElement.FindElement(By.ClassName("summaryRealname")).FindElement(By.ClassName("flag")).GetAttribute("title").ToString();
-                    playerStatsDict.Add("county", country);
+                    player.county = country;
                     string fullName = summaryElement.FindElement(By.ClassName("summaryRealname")).FindElement(By.ClassName("text-ellipsis")).Text;
-                    playerStatsDict.Add("fullName", fullName);
+                    player.fullName = fullName;
                     string teamName = summaryElement.FindElement(By.ClassName("SummaryTeamname")).FindElement(By.ClassName("text-ellipsis")).Text;
-                    playerStatsDict.Add("teamName", teamName);
+                    player.teamName = teamName;
                     string age = summaryElement.FindElement(By.ClassName("summaryPlayerAge")).Text;
-                    playerStatsDict.Add("age", age);
+                    player.age = age;
                 }
                 catch (NoSuchElementException e)
                 {
@@ -128,13 +163,30 @@ namespace HLTVScrapperAPI.Services
                     ReadOnlyCollection<IWebElement> summaryStatBreakdownElements = summaryBreakdownElement.FindElements(By.ClassName("summaryStatBreakdown"));
                     foreach (IWebElement breakdownElement in summaryStatBreakdownElements)
                     {
-                        IWebElement nameElement = breakdownElement.FindElement(By.ClassName("summaryStatBreakdownSubHeader"));
-                        string statName = nameElement.Text;
-                        IWebElement valueElement = breakdownElement.FindElement(By.ClassName("summaryStatBreakdownData")).FindElement(By.ClassName("summaryStatBreakdownDataValue"));
-                        string value = valueElement.Text;
-                        IWebElement descriptionElement = breakdownElement.FindElement(By.ClassName("summaryStatBreakdownDescription"));
-                        string description = descriptionElement.Text;
-                        playerStatsDict.Add(statName, $"{value}_{description}");
+                        string stat = breakdownElement.FindElement(By.ClassName("summaryStatBreakdownSubHeader")).Text;
+                        string statValue = breakdownElement.FindElement(By.ClassName("summaryStatBreakdownData")).FindElement(By.ClassName("summaryStatBreakdownDataValue")).Text;
+                        string description = breakdownElement.FindElement(By.ClassName("summaryStatBreakdownDescription")).Text;
+                        switch (stat)
+                        {
+                            case "Rating 2.0":
+                                player.rating1_0 = statValue;
+                                break;
+                            case "DPR":
+                                player.DPR = statValue;
+                                break;
+                            case "KAST":
+                                player.KAST = statValue;
+                                break;
+                            case "impact":
+                                player.impact = statValue;
+                                break;
+                            case "ADR":
+                                player.ADR = statValue;
+                                break;
+                            case "KPR":
+                                player.KPR = statValue;
+                                break;
+                        }
                     }
                 } 
                 catch (NoSuchElementException e)
@@ -145,9 +197,7 @@ namespace HLTVScrapperAPI.Services
                 try
                 {
                     ReadOnlyCollection<IWebElement> statRowElements = driver.FindElements(By.ClassName("stats-row"));
-                    Dictionary<string, string> generalStatistics = new Dictionary<string, string>();
-                    PopulateStatsFromSpanLists(statRowElements, generalStatistics);
-                    playerStatsDict.Add("general", generalStatistics);
+                    PopulateStatsFromSpanLists(statRowElements, player);                
                 }
                 catch (NoSuchElementException e)
                 {
@@ -158,8 +208,6 @@ namespace HLTVScrapperAPI.Services
                 {
                     IWebElement featuredRatingGrid = driver.FindElement(By.ClassName("featured-ratings-container")).FindElement(By.ClassName("g-grid"));
                     ReadOnlyCollection<IWebElement> featuredRatingStats = featuredRatingGrid.FindElements(By.ClassName("col-custom"));
-                    Dictionary<string, string> ratingStatistics = new Dictionary<string, string>();
-                    playerStatsDict.Add("rating", ratingStatistics);
                     foreach (IWebElement stat in featuredRatingStats)
                     {
                         try
@@ -168,7 +216,29 @@ namespace HLTVScrapperAPI.Services
                             string ratingValue = ratingBreakdown.FindElement(By.ClassName("rating-value")).Text;
                             string ratingDescription = ratingBreakdown.FindElement(By.ClassName("rating-description")).Text;
                             string ratingMaps = ratingBreakdown.FindElement(By.ClassName("rating-maps")).Text;
-                            ratingStatistics.Add($"RATING 2.0 {ratingDescription}", $"{ratingValue}_{ratingMaps}");
+                            switch (ratingDescription)
+                            {
+                                case "vs top 5 opponents":
+                                    player.opponentRating.ratingTop5.rating = ratingValue;
+                                    player.opponentRating.ratingTop5.maps = ratingMaps;
+                                    break;
+                                case "vs top 10 opponents":
+                                    player.opponentRating.ratingTop10.rating = ratingValue;
+                                    player.opponentRating.ratingTop10.maps = ratingMaps;
+                                    break;
+                                case "vs top 20 opponents":
+                                    player.opponentRating.ratingTop20.rating = ratingValue;
+                                    player.opponentRating.ratingTop20.maps = ratingMaps;
+                                    break;
+                                case "vs top 30 opponents":
+                                    player.opponentRating.ratingTop30.rating = ratingValue;
+                                    player.opponentRating.ratingTop30.maps = ratingMaps;
+                                    break;
+                                case "vs top 50 opponents":
+                                    player.opponentRating.ratingTop50.rating = ratingValue;
+                                    player.opponentRating.ratingTop50.maps = ratingMaps;
+                                    break;
+                            }
                         }
                         catch (NoSuchElementException e)
                         {
@@ -191,65 +261,8 @@ namespace HLTVScrapperAPI.Services
                 {
                     Debug.WriteLine($"Error: {e.Message}");
                 }
-
-                Thread.Sleep(TimeSpan.FromSeconds(1));
-                ReadOnlyCollection<IWebElement> standardBoxElements = new ReadOnlyCollection<IWebElement>([]);
-                try
-                {
-                    standardBoxElements = driver.FindElements(By.XPath("//*[@class='standard-box']"));
-                    IWebElement overallStatsBox = standardBoxElements[0];
-                    ReadOnlyCollection<IWebElement> overallStatRowElements = overallStatsBox.FindElements(By.ClassName("stats-row"));
-                    Dictionary<string, string> overallStats = new Dictionary<string, string>();
-                    PopulateStatsFromSpanLists(overallStatRowElements, overallStats);
-                    playerStatsDict.Add("overall", overallStats);
-                }
-                catch (NoSuchElementException e)
-                {
-                    Debug.WriteLine($"Error: {e.Message}");
-                }
-                Dictionary<string, string> roundStats = new Dictionary<string, string>();
-                try
-                {
-                    IWebElement openingStatsBox = standardBoxElements[1];
-                    ReadOnlyCollection<IWebElement> openingStatRowElements = openingStatsBox.FindElements(By.ClassName("stats-row"));
-                    PopulateStatsFromSpanLists(openingStatRowElements, roundStats);
-                    playerStatsDict.Add("round", roundStats);
-                }
-                catch (NullReferenceException e)
-                {
-                    Debug.WriteLine($"Error: {e.Message}");
-                    playerStatsDict.Add("round", roundStats);
-                }
-
-                Dictionary<string, string> openingStats = new Dictionary<string, string>();
-                try
-                {
-                    IWebElement roundStatsBox = standardBoxElements[2];
-                    ReadOnlyCollection<IWebElement> roundStatRowElements = roundStatsBox.FindElements(By.ClassName("stats-row"));
-                    PopulateStatsFromSpanLists(roundStatRowElements, openingStats);
-                    playerStatsDict.Add("opening", openingStats);
-                }
-                catch (NullReferenceException e)
-                {
-                    Debug.WriteLine($"Error: {e.Message}");
-                    playerStatsDict.Add("opening", openingStats);
-                }
-
-                Dictionary<string, string> weaponStats = new Dictionary<string, string>();
-                try
-                {
-                    IWebElement weaponStatsBox = standardBoxElements[3];
-                    ReadOnlyCollection<IWebElement> weaponStatRowElements = weaponStatsBox.FindElements(By.ClassName("stats-row"));
-                    PopulateStatsFromSpanLists(weaponStatRowElements, weaponStats);
-                    playerStatsDict.Add("weapon", weaponStats);
-                }
-                catch (NullReferenceException e)
-                {
-                    Debug.WriteLine($"Error: {e.Message}");
-                    playerStatsDict.Add("weapon", weaponStats);
-                }
-
-                return playerStatsDict;
+                
+                return player;
             
             }
             finally
