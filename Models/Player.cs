@@ -7,79 +7,78 @@ namespace HLTVScrapperAPI.Models
     {
         public Player()
         {
-            general = new GeneralStats
+            General = new GeneralStats
             {
-                totalKills = "",
-                headshotPercentage = "",
-                totalDeaths = "",
-                kD = "",
-                dmgPerRound = "",
-                grenadeDmgPerRound = "",
-                mapsPlayed = "",
-                roundsPlayed = "",
-                killsPerRound = "",
-                assistsPerRound = "",
-                deathsPerRound = "",
-                savedPerRound = "",
-                savesPerRound = "",
-                rating1_0 = ""
+                TotalKills = "",
+                HeadshotPercentage = "",
+                TotalDeaths = "",
+                KD = "",
+                DmgPerRound = "",
+                GrenadeDmgPerRound = "",
+                MapsPlayed = "",
+                RoundsPlayed = "",
+                KillsPerRound = "",
+                AssistsPerRound = "",
+                DeathsPerRound = "",
+                SavedPerRound = "",
+                SavesPerRound = "",
+                Rating1_0 = ""
             };
 
-            opponentRating = new OpponentRatingStats
+            OpponentRating = new OpponentRatingStats
             {
-                ratingTop5 = new OpponentRatingDetails(),
-                ratingTop10 = new OpponentRatingDetails(),
-                ratingTop20 = new OpponentRatingDetails(),
-                ratingTop30 = new OpponentRatingDetails(),
-                ratingTop50 = new OpponentRatingDetails()
+                RatingTop5 = new OpponentRatingDetails(),
+                RatingTop10 = new OpponentRatingDetails(),
+                RatingTop20 = new OpponentRatingDetails(),
+                RatingTop30 = new OpponentRatingDetails(),
+                RatingTop50 = new OpponentRatingDetails()
             };
         }
-        public string nickName { get; set; }
-        public string county { get; set; }
-        public string fullName { get; set; }
-        public string teamName { get; set; }
-        public string age { get; set; }
-        public string rating1_0 { get; set; }
+        public string NickName { get; set; }
+        public string County { get; set; }
+        public string FullName { get; set; }
+        public string TeamName { get; set; }
+        public string Age { get; set; }
+        public string Rating1_0 { get; set; }
         public string DPR { get; set; }
         public string KAST { get; set; }
-        public string impact { get; set; }
+        public string Impact { get; set; }
         public string ADR { get; set; }
         public string KPR { get; set; }
-        public GeneralStats general { get; set; }
-        public OpponentRatingStats opponentRating { get; set; }
+        public GeneralStats General { get; set; }
+        public OpponentRatingStats OpponentRating { get; set; }
     }
 
     public class GeneralStats
     {
-        public string totalKills { get; set; }
-        public string headshotPercentage { get; set; }
-        public string totalDeaths { get; set; }
-        public string kD { get; set; }
-        public string dmgPerRound { get; set; }
-        public string grenadeDmgPerRound { get; set; }
-        public string mapsPlayed { get; set; }
-        public string roundsPlayed { get; set; }
-        public string killsPerRound { get; set; }
-        public string assistsPerRound { get; set; }
-        public string deathsPerRound { get; set; }
-        public string savedPerRound { get; set; }
-        public string savesPerRound { get; set; }
-        public string rating1_0 { get; set; }
+        public string TotalKills { get; set; }
+        public string HeadshotPercentage { get; set; }
+        public string TotalDeaths { get; set; }
+        public string KD { get; set; }
+        public string DmgPerRound { get; set; }
+        public string GrenadeDmgPerRound { get; set; }
+        public string MapsPlayed { get; set; }
+        public string RoundsPlayed { get; set; }
+        public string KillsPerRound { get; set; }
+        public string AssistsPerRound { get; set; }
+        public string DeathsPerRound { get; set; }
+        public string SavedPerRound { get; set; }
+        public string SavesPerRound { get; set; }
+        public string Rating1_0 { get; set; }
     }
 
     public class OpponentRatingStats
     {
-        public OpponentRatingDetails ratingTop5 { get; set; }
-        public OpponentRatingDetails ratingTop10 { get; set; }
-        public OpponentRatingDetails ratingTop20 { get; set; }
-        public OpponentRatingDetails ratingTop30 { get; set; }
-        public OpponentRatingDetails ratingTop50 { get; set; }
+        public OpponentRatingDetails RatingTop5 { get; set; }
+        public OpponentRatingDetails RatingTop10 { get; set; }
+        public OpponentRatingDetails RatingTop20 { get; set; }
+        public OpponentRatingDetails RatingTop30 { get; set; }
+        public OpponentRatingDetails RatingTop50 { get; set; }
     }
 
     public class OpponentRatingDetails
     {
         public string rating { get; set; }
-
         public string maps { get; set; }
     }
 

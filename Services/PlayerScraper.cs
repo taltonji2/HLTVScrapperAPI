@@ -32,43 +32,43 @@ namespace HLTVScrapperAPI.Services
                         switch (statName)
                         {
                             case "Total kills":
-                                player.general.totalKills = statValue;
+                                player.General.TotalKills = statValue;
                                 break;
                             case "Headshot %":
-                                player.general.headshotPercentage = statValue;
+                                player.General.HeadshotPercentage = statValue;
                                 break;
                             case "Total deaths":
-                                player.general.totalDeaths = statValue;
+                                player.General.TotalDeaths = statValue;
                                 break;
                             case "K/D Ratio":
-                                player.general.kD = statValue;
+                                player.General.KD = statValue;
                                 break;
                             case "Damage / Round":
-                                player.general.dmgPerRound = statValue;
+                                player.General.DmgPerRound = statValue;
                                 break;
                             case "Grenade dmg / Round":
-                                player.general.grenadeDmgPerRound = statValue;
+                                player.General.GrenadeDmgPerRound = statValue;
                                 break;
                             case "Maps played":
-                                player.general.mapsPlayed = statValue;
+                                player.General.MapsPlayed = statValue;
                                 break;  
                             case "Rounds played":
-                                player.general.roundsPlayed = statValue;
+                                player.General.RoundsPlayed = statValue;
                                 break;  
                             case "Kills / round":
-                                player.general.killsPerRound = statValue;
+                                player.General.KillsPerRound = statValue;
                                 break;
                             case "Assists / round":
-                                player.general.assistsPerRound = statValue;
+                                player.General.AssistsPerRound = statValue;
                                 break;
                             case "Deaths / round":
-                                player.general.deathsPerRound = statValue;
+                                player.General.DeathsPerRound = statValue;
                                 break;
                             case "Saved by teammate / round":
-                                player.general.savedPerRound = statValue;
+                                player.General.SavedPerRound = statValue;
                                 break;
                             case "Saved teammates / round":
-                                player.general.savesPerRound = statValue;
+                                player.General.SavesPerRound = statValue;
                                 break;
                         }
                     }
@@ -128,12 +128,12 @@ namespace HLTVScrapperAPI.Services
                     Debug.WriteLine($"Error: {e.Message}");
                 }
                 
-                // nickName, country, fullName, teamName, age
+                // NickName, country, FullName, TeamName, Age
                 try
                 {
                     IWebElement nickNameElement = driver.FindElement(By.ClassName("summaryNickname"));
                     string nickName = nickNameElement.Text;
-                    player.nickName = nickName;
+                    player.NickName = nickName;
                 } 
                 catch (NoSuchElementException e)
                 {
@@ -144,13 +144,13 @@ namespace HLTVScrapperAPI.Services
                 {
                     IWebElement summaryElement = driver.FindElement(By.ClassName("summaryInfoContainer"));
                     string country = summaryElement.FindElement(By.ClassName("summaryRealname")).FindElement(By.ClassName("flag")).GetAttribute("title").ToString();
-                    player.county = country;
+                    player.County = country;
                     string fullName = summaryElement.FindElement(By.ClassName("summaryRealname")).FindElement(By.ClassName("text-ellipsis")).Text;
-                    player.fullName = fullName;
+                    player.FullName = fullName;
                     string teamName = summaryElement.FindElement(By.ClassName("SummaryTeamname")).FindElement(By.ClassName("text-ellipsis")).Text;
-                    player.teamName = teamName;
+                    player.TeamName = teamName;
                     string age = summaryElement.FindElement(By.ClassName("summaryPlayerAge")).Text;
-                    player.age = age;
+                    player.Age = age;
                 }
                 catch (NoSuchElementException e)
                 {
@@ -169,7 +169,7 @@ namespace HLTVScrapperAPI.Services
                         switch (stat)
                         {
                             case "Rating 2.0":
-                                player.rating1_0 = statValue;
+                                player.Rating1_0 = statValue;
                                 break;
                             case "DPR":
                                 player.DPR = statValue;
@@ -177,8 +177,8 @@ namespace HLTVScrapperAPI.Services
                             case "KAST":
                                 player.KAST = statValue;
                                 break;
-                            case "impact":
-                                player.impact = statValue;
+                            case "Impact":
+                                player.Impact = statValue;
                                 break;
                             case "ADR":
                                 player.ADR = statValue;
@@ -219,24 +219,24 @@ namespace HLTVScrapperAPI.Services
                             switch (ratingDescription)
                             {
                                 case "vs top 5 opponents":
-                                    player.opponentRating.ratingTop5.rating = ratingValue;
-                                    player.opponentRating.ratingTop5.maps = ratingMaps;
+                                    player.OpponentRating.RatingTop5.rating = ratingValue;
+                                    player.OpponentRating.RatingTop5.maps = ratingMaps;
                                     break;
                                 case "vs top 10 opponents":
-                                    player.opponentRating.ratingTop10.rating = ratingValue;
-                                    player.opponentRating.ratingTop10.maps = ratingMaps;
+                                    player.OpponentRating.RatingTop10.rating = ratingValue;
+                                    player.OpponentRating.RatingTop10.maps = ratingMaps;
                                     break;
                                 case "vs top 20 opponents":
-                                    player.opponentRating.ratingTop20.rating = ratingValue;
-                                    player.opponentRating.ratingTop20.maps = ratingMaps;
+                                    player.OpponentRating.RatingTop20.rating = ratingValue;
+                                    player.OpponentRating.RatingTop20.maps = ratingMaps;
                                     break;
                                 case "vs top 30 opponents":
-                                    player.opponentRating.ratingTop30.rating = ratingValue;
-                                    player.opponentRating.ratingTop30.maps = ratingMaps;
+                                    player.OpponentRating.RatingTop30.rating = ratingValue;
+                                    player.OpponentRating.RatingTop30.maps = ratingMaps;
                                     break;
                                 case "vs top 50 opponents":
-                                    player.opponentRating.ratingTop50.rating = ratingValue;
-                                    player.opponentRating.ratingTop50.maps = ratingMaps;
+                                    player.OpponentRating.RatingTop50.rating = ratingValue;
+                                    player.OpponentRating.RatingTop50.maps = ratingMaps;
                                     break;
                             }
                         }
