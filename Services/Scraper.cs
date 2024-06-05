@@ -7,7 +7,9 @@ namespace HLTVScrapperAPI.Services
 {
     public class Scraper
     {
-        protected IWebDriver driver { get; set; }
+        protected UndetectedChromeDriver Driver { get; set; }
+
+        List<string> ChromeProcessId { get; set; }
 
         public Scraper()
         {
@@ -16,18 +18,20 @@ namespace HLTVScrapperAPI.Services
                 undetectedChromeDriverPath = @"C:/Users/Timothy/source/repos/HLTVScrapperAPI/bin/ChromeDriver/chromedriver.exe";
             else 
                 undetectedChromeDriverPath = @"bin/ChromeDriver/chromedriver";
-            driver = UndetectedChromeDriver.Create(driverExecutablePath: undetectedChromeDriverPath);
+            Driver = UndetectedChromeDriver.Create(driverExecutablePath: undetectedChromeDriverPath);
+            
         }
         protected void Dispose() 
         {
             try
             {
-                driver.Close();
-                driver.Quit();
-                driver.Dispose();
+                Driver.Close();
+                Driver.Quit();
+                Driver.Dispose();
 
-                //TODO: keep track of created processes and only kill pid that were created
+                //TODO: close all chrome processes except the main application
                 IEnumerable<int> chromePids = Process.GetProcessesByName("chrome").Select(p => p.Id);
+                
                 foreach (int pid in chromePids)
                 {
                     Process chromeProcess = Process.GetProcessById(pid);

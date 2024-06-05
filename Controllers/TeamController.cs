@@ -1,7 +1,6 @@
 using HLTVScrapperAPI.Models;
 using HLTVScrapperAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace HLTVScrapperAPI.Controllers 
 {
@@ -11,6 +10,12 @@ namespace HLTVScrapperAPI.Controllers
     {
         private readonly ILogger<TeamController> _logger;
 
+        private struct TeamScrapeResponse
+        {
+            public Team team { get; set; }
+            public HttpStatusCode
+        }
+
         public TeamController(ILogger<TeamController> logger)
         {
             _logger = logger;
@@ -19,15 +24,13 @@ namespace HLTVScrapperAPI.Controllers
         [HttpPost("/api/team")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
         [Produces("application/json")]
         public IActionResult ScrapeTeam([FromBody] TeamScrapeRequest request)
         {
             TeamScraper teamScraper = new TeamScraper();
-            var teamDict = teamScraper.Scrape(request: request);
-            string prettyJson = JsonConvert.SerializeObject(teamDict, Formatting.Indented);
-            // var team = TeamMapper.MapJsonToTeam(prettyJson);
-            // var json = JsonConvert.SerializeObject(team);
-            return Ok();
+            var team, var a = teamScraper.Scrape(request: request);
+            return Ok(team);
         }
     }
 }

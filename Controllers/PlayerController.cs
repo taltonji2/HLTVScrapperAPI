@@ -1,7 +1,6 @@
 using HLTVScrapperAPI.Models;
 using HLTVScrapperAPI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace HLTVScrapperAPI.Controllers
 {
@@ -19,13 +18,13 @@ namespace HLTVScrapperAPI.Controllers
         [HttpPost("/api/player")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
+        [ProducesResponseType(404)]
         [Produces("application/json")]
         public IActionResult ScrapePlayer([FromBody] PlayerScrapeRequest request)
         {
             PlayerScraper playerScraper = new PlayerScraper();
             Player player = playerScraper.Scrape(request: request);
-            var json = JsonConvert.SerializeObject(player);
-            return Ok(json);
+            return Ok(player);
         }
     }
 }

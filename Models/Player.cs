@@ -1,8 +1,5 @@
 namespace HLTVScrapperAPI.Models
 {
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
-
     public class Player
     {
         public Player()
@@ -27,11 +24,11 @@ namespace HLTVScrapperAPI.Models
 
             OpponentRating = new OpponentRatingStats
             {
-                RatingTop5 = new OpponentRatingDetails(),
-                RatingTop10 = new OpponentRatingDetails(),
-                RatingTop20 = new OpponentRatingDetails(),
-                RatingTop30 = new OpponentRatingDetails(),
-                RatingTop50 = new OpponentRatingDetails()
+                RatingVsTop5 = new OpponentRatingDetails(),
+                RatingVsTop10 = new OpponentRatingDetails(),
+                RatingVsTop20 = new OpponentRatingDetails(),
+                RatingVsTop30 = new OpponentRatingDetails(),
+                RatingVsTop50 = new OpponentRatingDetails()
             };
         }
         public string NickName { get; set; }
@@ -69,11 +66,11 @@ namespace HLTVScrapperAPI.Models
 
     public class OpponentRatingStats
     {
-        public OpponentRatingDetails RatingTop5 { get; set; }
-        public OpponentRatingDetails RatingTop10 { get; set; }
-        public OpponentRatingDetails RatingTop20 { get; set; }
-        public OpponentRatingDetails RatingTop30 { get; set; }
-        public OpponentRatingDetails RatingTop50 { get; set; }
+        public OpponentRatingDetails RatingVsTop5 { get; set; }
+        public OpponentRatingDetails RatingVsTop10 { get; set; }
+        public OpponentRatingDetails RatingVsTop20 { get; set; }
+        public OpponentRatingDetails RatingVsTop30 { get; set; }
+        public OpponentRatingDetails RatingVsTop50 { get; set; }
     }
 
     public class OpponentRatingDetails
@@ -81,6 +78,5 @@ namespace HLTVScrapperAPI.Models
         public string rating { get; set; }
         public string maps { get; set; }
     }
-
 
 }

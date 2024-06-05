@@ -10,13 +10,13 @@ namespace HLTVScrapperAPI.Services
     {
        public TeamScraper() : base() {}
 
-        public Team Scrape(ScrapeRequest request)
+        public Team Scrape(TeamScrapeRequest request)
         {
             try 
             { 
                 Team team = new Team();
-                driver.Navigate().GoToUrl($"https://www.hltv.org/stats");
-                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
+                Driver.Navigate().GoToUrl($"https://www.hltv.org/stats");
+                WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(3));
 
                 try
                 {
@@ -37,9 +37,9 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    IWebElement searchInput = driver.FindElement(By.CssSelector("input[class='search-input navsearchinput tt-input']"));
+                    IWebElement searchInput = Driver.FindElement(By.CssSelector("input[class='search-input navsearchinput tt-input']"));
                     searchInput.Click();
-                    searchInput.SendKeys("cloud9");
+                    searchInput.SendKeys(request.Name);
                     Thread.Sleep(TimeSpan.FromSeconds(1));
                 }
                 catch (NoSuchElementException e)
@@ -49,19 +49,20 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    IWebElement teamItem = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[2]/div[1]/div[2]/div[2]/div/div/div/span/div/div/div/div[2]/div[1]/a[1]"));
+                    IWebElement teamItem = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[2]/div[1]/div[2]/div[2]/div/div/div/span/div/div/div/div[2]/div[1]/a[1]"));
                     teamItem.Click();
-                    IWebElement currentContext = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[10]/a"));
+                    IWebElement currentContext = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[10]/a"));
                     currentContext.Click();
                 }
                 catch (NoSuchElementException e)
                 {
                     Debug.WriteLine($"Error: Team item not found {e.Message}");
+                    return null;
                 }
 
                 try
                 {
-                    string mapsPlayed = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[6]/div[1]/div[1]")).Text;
+                    string mapsPlayed = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[6]/div[1]/div[1]")).Text;
                     team.MapsPlayed = mapsPlayed;
                 }
                 catch (NoSuchElementException e)
@@ -71,7 +72,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string winsDrawsLosses = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[6]/div[2]/div[1]")).Text;
+                    string winsDrawsLosses = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[6]/div[2]/div[1]")).Text;
                     //calculate win rate
                 }
                 catch (NoSuchElementException e)
@@ -81,7 +82,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string roundsPlayed = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[8]/div[2]/div[1]")).Text;
+                    string roundsPlayed = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[8]/div[2]/div[1]")).Text;
                     team.RoundsPlayed = roundsPlayed;
                 }
                 catch (NoSuchElementException e)
@@ -91,7 +92,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string killDeathRatio = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[8]/div[3]/div[1]")).Text;
+                    string killDeathRatio = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[8]/div[3]/div[1]")).Text;
                     team.KD = killDeathRatio;
                 }
                 catch (NoSuchElementException e)
@@ -102,7 +103,7 @@ namespace HLTVScrapperAPI.Services
                 //Maps
                 try
                 {
-                    IWebElement mapsTab = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[4]/div/div[1]/a[3]"));
+                    IWebElement mapsTab = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[4]/div/div[1]/a[3]"));
                     mapsTab.Click();
                 }
                 catch (NoSuchElementException e)
@@ -113,11 +114,11 @@ namespace HLTVScrapperAPI.Services
                 // Anubis
                 try
                 {
-                    string anubisWinsDrawsLosses = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[2]/div[1]/span[2]")).Text;
-                    string anubisWinsRate = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[2]/div[2]/span[2]")).Text;
-                    string anubisTotalRounds = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[2]/div[3]/span[2]")).Text;
-                    string anubisRoundWinPercentAfterFirstKill = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[2]/div[4]/span[2]")).Text;
-                    string anubisRoundWinPercentAfterFirstDeath = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[2]/div[5]/span[2]")).Text;
+                    string anubisWinsDrawsLosses = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[2]/div[1]/span[2]")).Text;
+                    string anubisWinsRate = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[2]/div[2]/span[2]")).Text;
+                    string anubisTotalRounds = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[2]/div[3]/span[2]")).Text;
+                    string anubisRoundWinPercentAfterFirstKill = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[2]/div[4]/span[2]")).Text;
+                    string anubisRoundWinPercentAfterFirstDeath = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[2]/div[5]/span[2]")).Text;
                     team.Anubis.WinRate = anubisWinsRate;
                     team.Anubis.RoundsPlayed = anubisTotalRounds;
                     team.Anubis.RoundWinRateAfterFirstKill = anubisRoundWinPercentAfterFirstKill;
@@ -130,7 +131,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string anubisBiggestWin = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
+                    string anubisBiggestWin = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
                     team.Anubis.BiggestWin = anubisBiggestWin;
                 }
                 catch (NoSuchElementException e)
@@ -140,7 +141,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string anubisBiggestDefeat = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
+                    string anubisBiggestDefeat = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[1]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
                     team.Anubis.BiggestLoss = anubisBiggestDefeat;
                 }
                 catch (NoSuchElementException e)
@@ -151,11 +152,11 @@ namespace HLTVScrapperAPI.Services
                 // Ancient
                 try
                 {
-                    string ancientWinsDrawsLosses = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[2]/div[1]/span[2]")).Text;
-                    string ancientWinsRate = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[2]/div[2]/span[2]")).Text;
-                    string ancientTotalRounds = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[2]/div[3]/span[2]")).Text;
-                    string ancientRoundWinPercentAfterFirstKill = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[2]/div[4]/span[2]")).Text;
-                    string ancientRoundWinPercentAfterFirstDeath = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[2]/div[5]/span[2]")).Text;
+                    string ancientWinsDrawsLosses = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[2]/div[1]/span[2]")).Text;
+                    string ancientWinsRate = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[2]/div[2]/span[2]")).Text;
+                    string ancientTotalRounds = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[2]/div[3]/span[2]")).Text;
+                    string ancientRoundWinPercentAfterFirstKill = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[2]/div[4]/span[2]")).Text;
+                    string ancientRoundWinPercentAfterFirstDeath = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[2]/div[5]/span[2]")).Text;
                     team.Ancient.WinRate = ancientWinsRate;
                     team.Ancient.RoundsPlayed = ancientTotalRounds;
                     team.Ancient.RoundWinRateAfterFirstKill = ancientRoundWinPercentAfterFirstKill;
@@ -168,7 +169,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string ancientBiggestWin = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
+                    string ancientBiggestWin = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
                     team.Ancient.BiggestWin = ancientBiggestWin;
                 }
                 catch (NoSuchElementException e)
@@ -178,7 +179,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string ancientBiggestDefeat = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
+                    string ancientBiggestDefeat = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[2]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
                     team.Ancient.BiggestLoss = ancientBiggestDefeat;
                 }
                 catch (NoSuchElementException e)
@@ -189,11 +190,11 @@ namespace HLTVScrapperAPI.Services
                 // Overpass
                 try
                 {
-                    string overpassWinsDrawsLosses = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[2]/div[1]/span[2]")).Text;
-                    string overpassWinsRate = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[2]/div[2]/span[2]")).Text;
-                    string overpassTotalRounds = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[2]/div[3]/span[2]")).Text;
-                    string overpassRoundWinPercentAfterFirstKill = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[2]/div[4]/span[2]")).Text;
-                    string overpassRoundWinPercentAfterFirstDeath = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[2]/div[5]/span[2]")).Text;
+                    string overpassWinsDrawsLosses = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[2]/div[1]/span[2]")).Text;
+                    string overpassWinsRate = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[2]/div[2]/span[2]")).Text;
+                    string overpassTotalRounds = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[2]/div[3]/span[2]")).Text;
+                    string overpassRoundWinPercentAfterFirstKill = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[2]/div[4]/span[2]")).Text;
+                    string overpassRoundWinPercentAfterFirstDeath = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[2]/div[5]/span[2]")).Text;
                     team.Overpass.WinRate = overpassWinsRate;
                     team.Overpass.RoundsPlayed = overpassTotalRounds;
                     team.Overpass.RoundWinRateAfterFirstKill = overpassRoundWinPercentAfterFirstKill;
@@ -206,7 +207,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string overpassBiggestWin = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
+                    string overpassBiggestWin = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
                     team.Overpass.BiggestWin = overpassBiggestWin;
                 }
                 catch (NoSuchElementException e)
@@ -216,7 +217,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string overpassBiggestDefeat = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
+                    string overpassBiggestDefeat = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[3]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
                     team.Overpass.BiggestLoss = overpassBiggestDefeat;
                 }
                 catch (NoSuchElementException e)
@@ -227,11 +228,11 @@ namespace HLTVScrapperAPI.Services
                 // Mirage 
                 try
                 {
-                    string mirageWinsDrawsLosses = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[2]/div[1]/span[2]")).Text;
-                    string mirageWinsRate = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[2]/div[2]/span[2]")).Text;
-                    string mirageTotalRounds = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[2]/div[3]/span[2]")).Text;
-                    string mirageRoundWinPercentAfterFirstKill = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[2]/div[4]/span[2]")).Text;
-                    string mirageRoundWinPercentAfterFirstDeath = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[2]/div[5]/span[2]")).Text;
+                    string mirageWinsDrawsLosses = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[2]/div[1]/span[2]")).Text;
+                    string mirageWinsRate = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[2]/div[2]/span[2]")).Text;
+                    string mirageTotalRounds = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[2]/div[3]/span[2]")).Text;
+                    string mirageRoundWinPercentAfterFirstKill = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[2]/div[4]/span[2]")).Text;
+                    string mirageRoundWinPercentAfterFirstDeath = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[2]/div[5]/span[2]")).Text;
                     team.Mirage.WinRate = mirageWinsRate;
                     team.Mirage.RoundsPlayed = mirageTotalRounds;
                     team.Mirage.RoundWinRateAfterFirstKill = mirageRoundWinPercentAfterFirstKill;
@@ -244,7 +245,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string mirageBiggestWin = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
+                    string mirageBiggestWin = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
                     team.Mirage.BiggestWin = mirageBiggestWin;
                 }
                 catch (NoSuchElementException e)
@@ -254,7 +255,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string mirageBiggestDefeat = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
+                    string mirageBiggestDefeat = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[4]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
                     team.Mirage.BiggestLoss = mirageBiggestDefeat;
                 }
                 catch (NoSuchElementException e)
@@ -265,11 +266,11 @@ namespace HLTVScrapperAPI.Services
                 // Inferno
                 try
                 {
-                    string infernoWinsDrawsLosses = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[2]/div[1]/span[2]")).Text;
-                    string infernoWinsRate = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[2]/div[2]/span[2]")).Text;
-                    string infernoTotalRounds = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[2]/div[3]/span[2]")).Text;
-                    string infernoRoundWinPercentAfterFirstKill = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[2]/div[4]/span[2]")).Text;
-                    string infernoRoundWinPercentAfterFirstDeath = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[2]/div[5]/span[2]")).Text;
+                    string infernoWinsDrawsLosses = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[2]/div[1]/span[2]")).Text;
+                    string infernoWinsRate = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[2]/div[2]/span[2]")).Text;
+                    string infernoTotalRounds = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[2]/div[3]/span[2]")).Text;
+                    string infernoRoundWinPercentAfterFirstKill = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[2]/div[4]/span[2]")).Text;
+                    string infernoRoundWinPercentAfterFirstDeath = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[2]/div[5]/span[2]")).Text;
                     team.Inferno.WinRate = infernoWinsRate;
                     team.Inferno.RoundsPlayed = infernoTotalRounds;
                     team.Inferno.RoundWinRateAfterFirstKill = infernoRoundWinPercentAfterFirstKill;
@@ -282,7 +283,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string infernoBiggestWin = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
+                    string infernoBiggestWin = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
                     team.Inferno.BiggestWin = infernoBiggestWin;
                 }
                 catch (NoSuchElementException e)
@@ -293,7 +294,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string infernoBiggestDefeat = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
+                    string infernoBiggestDefeat = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[5]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
                     team.Inferno.BiggestLoss = infernoBiggestDefeat;
                 }
                 catch (NoSuchElementException e)
@@ -305,11 +306,11 @@ namespace HLTVScrapperAPI.Services
                 // Nuke
                 try
                 {
-                    string nukeWinsDrawsLosses = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[2]/div[1]/span[2]")).Text;
-                    string nukeWinsRate = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[2]/div[2]/span[2]")).Text;
-                    string nukeTotalRounds = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[2]/div[3]/span[2]")).Text;
-                    string nukeRoundWinPercentAfterFirstKill = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[2]/div[4]/span[2]")).Text;
-                    string nukeRoundWinPercentAfterFirstDeath = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[2]/div[5]/span[2]")).Text;
+                    string nukeWinsDrawsLosses = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[2]/div[1]/span[2]")).Text;
+                    string nukeWinsRate = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[2]/div[2]/span[2]")).Text;
+                    string nukeTotalRounds = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[2]/div[3]/span[2]")).Text;
+                    string nukeRoundWinPercentAfterFirstKill = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[2]/div[4]/span[2]")).Text;
+                    string nukeRoundWinPercentAfterFirstDeath = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[2]/div[5]/span[2]")).Text;
                     team.Nuke.WinRate = nukeWinsRate;
                     team.Nuke.RoundsPlayed = nukeTotalRounds;
                     team.Nuke.RoundWinRateAfterFirstKill = nukeRoundWinPercentAfterFirstKill;
@@ -322,7 +323,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string nukeBiggestWin = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
+                    string nukeBiggestWin = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
                     team.Nuke.BiggestWin = nukeBiggestWin;
                 }
                 catch (NoSuchElementException e)
@@ -333,7 +334,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string nukeBiggestDefeat = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
+                    string nukeBiggestDefeat = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[6]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
                     team.Nuke.BiggestLoss = nukeBiggestDefeat;
                 }
                 catch (NoSuchElementException e)
@@ -345,11 +346,11 @@ namespace HLTVScrapperAPI.Services
                 // Vertigo
                 try
                 {
-                    string vertigoWinsDrawsLosses = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[2]/div[1]/span[2]")).Text;
-                    string vertigoWinsRate = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[2]/div[2]/span[2]")).Text;
-                    string vertigoTotalRounds = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[2]/div[3]/span[2]")).Text;
-                    string vertigoRoundWinPercentAfterFirstKill = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[2]/div[4]/span[2]")).Text;
-                    string vertigoRoundWinPercentAfterFirstDeath = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[2]/div[5]/span[2]")).Text;
+                    string vertigoWinsDrawsLosses = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[2]/div[1]/span[2]")).Text;
+                    string vertigoWinsRate = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[2]/div[2]/span[2]")).Text;
+                    string vertigoTotalRounds = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[2]/div[3]/span[2]")).Text;
+                    string vertigoRoundWinPercentAfterFirstKill = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[2]/div[4]/span[2]")).Text;
+                    string vertigoRoundWinPercentAfterFirstDeath = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[2]/div[5]/span[2]")).Text;
                     team.Vertigo.WinRate = vertigoWinsRate;
                     team.Vertigo.RoundsPlayed = vertigoTotalRounds;
                     team.Vertigo.RoundWinRateAfterFirstKill = vertigoRoundWinPercentAfterFirstKill;
@@ -362,18 +363,17 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    string vertigoBiggestWin = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
+                    string vertigoBiggestWin = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[3]/div[1]/a/div/div[1]/div[2]")).Text;
                     team.Vertigo.BiggestWin = vertigoBiggestWin;
                 }
                 catch (NoSuchElementException e)
                 {
                     Debug.WriteLine(e.Message);
-
                 }
 
                 try
                 {
-                    string vertigoBiggestDefeat = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
+                    string vertigoBiggestDefeat = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[9]/div[9]/div[3]/div[2]/a/div/div[1]/div[2]")).Text;
                     team.Vertigo.BiggestLoss = vertigoBiggestDefeat;
                 }
                 catch (NoSuchElementException e)
@@ -385,7 +385,7 @@ namespace HLTVScrapperAPI.Services
                 //Players
                 try
                 {
-                    IWebElement playersTab = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[4]/div/div[1]/a[4]"));
+                    IWebElement playersTab = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[4]/div/div[1]/a[4]"));
                     playersTab.Click();
                 }
                 catch (NoSuchElementException e)
@@ -395,7 +395,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    IWebElement playersTableDiv = driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/table/tbody"));
+                    IWebElement playersTableDiv = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/table/tbody"));
                     ReadOnlyCollection<IWebElement> playerDivs = playersTableDiv.FindElements(By.TagName("tr"));
                     KeyValuePair<string, string>[] players = Array.Empty<KeyValuePair<string, string>>();
                     foreach (IWebElement item in playerDivs.ToArray())

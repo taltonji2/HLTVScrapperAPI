@@ -84,8 +84,8 @@ namespace HLTVScrapperAPI.Services
         {
             try
             {
-                driver.Navigate().GoToUrl($"https://www.hltv.org/stats");
-                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(3));
+                Driver.Navigate().GoToUrl($"https://www.hltv.org/stats");
+                WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(3));
                 
                 try
                 {
@@ -108,7 +108,7 @@ namespace HLTVScrapperAPI.Services
                 
                 try
                 {
-                    IWebElement searchInput = driver.FindElement(By.CssSelector("input[class='search-input navsearchinput tt-input']"));
+                    IWebElement searchInput = Driver.FindElement(By.CssSelector("input[class='search-input navsearchinput tt-input']"));
                     searchInput.Click();
                     searchInput.SendKeys("s1mple");
                     Thread.Sleep(TimeSpan.FromSeconds(1));
@@ -116,11 +116,12 @@ namespace HLTVScrapperAPI.Services
                 catch (NoSuchElementException e)
                 {
                     Debug.WriteLine($"Error: {e.Message}");
+                    return null;
                 }
 
                 try
                 {
-                    IWebElement playerItem = driver.FindElement(By.CssSelector("div[class='box compact player hoverable stats-search-result']"));
+                    IWebElement playerItem = Driver.FindElement(By.CssSelector("div[class='box compact player hoverable stats-search-result']"));
                     playerItem.Click();
                 } 
                 catch (NoSuchElementException e)
@@ -131,7 +132,7 @@ namespace HLTVScrapperAPI.Services
                 // NickName, country, FullName, TeamName, Age
                 try
                 {
-                    IWebElement nickNameElement = driver.FindElement(By.ClassName("summaryNickname"));
+                    IWebElement nickNameElement = Driver.FindElement(By.ClassName("summaryNickname"));
                     string nickName = nickNameElement.Text;
                     player.NickName = nickName;
                 } 
@@ -142,7 +143,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    IWebElement summaryElement = driver.FindElement(By.ClassName("summaryInfoContainer"));
+                    IWebElement summaryElement = Driver.FindElement(By.ClassName("summaryInfoContainer"));
                     string country = summaryElement.FindElement(By.ClassName("summaryRealname")).FindElement(By.ClassName("flag")).GetAttribute("title").ToString();
                     player.County = country;
                     string fullName = summaryElement.FindElement(By.ClassName("summaryRealname")).FindElement(By.ClassName("text-ellipsis")).Text;
@@ -159,7 +160,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    IWebElement summaryBreakdownElement = driver.FindElement(By.ClassName("summaryBreakdownContainer"));
+                    IWebElement summaryBreakdownElement = Driver.FindElement(By.ClassName("summaryBreakdownContainer"));
                     ReadOnlyCollection<IWebElement> summaryStatBreakdownElements = summaryBreakdownElement.FindElements(By.ClassName("summaryStatBreakdown"));
                     foreach (IWebElement breakdownElement in summaryStatBreakdownElements)
                     {
@@ -196,7 +197,7 @@ namespace HLTVScrapperAPI.Services
                 
                 try
                 {
-                    ReadOnlyCollection<IWebElement> statRowElements = driver.FindElements(By.ClassName("stats-row"));
+                    ReadOnlyCollection<IWebElement> statRowElements = Driver.FindElements(By.ClassName("stats-row"));
                     PopulateStatsFromSpanLists(statRowElements, player);                
                 }
                 catch (NoSuchElementException e)
@@ -206,7 +207,7 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    IWebElement featuredRatingGrid = driver.FindElement(By.ClassName("featured-ratings-container")).FindElement(By.ClassName("g-grid"));
+                    IWebElement featuredRatingGrid = Driver.FindElement(By.ClassName("featured-ratings-container")).FindElement(By.ClassName("g-grid"));
                     ReadOnlyCollection<IWebElement> featuredRatingStats = featuredRatingGrid.FindElements(By.ClassName("col-custom"));
                     foreach (IWebElement stat in featuredRatingStats)
                     {
@@ -219,24 +220,24 @@ namespace HLTVScrapperAPI.Services
                             switch (ratingDescription)
                             {
                                 case "vs top 5 opponents":
-                                    player.OpponentRating.RatingTop5.rating = ratingValue;
-                                    player.OpponentRating.RatingTop5.maps = ratingMaps;
+                                    player.OpponentRating.RatingVsTop5.rating = ratingValue;
+                                    player.OpponentRating.RatingVsTop5.maps = ratingMaps;
                                     break;
                                 case "vs top 10 opponents":
-                                    player.OpponentRating.RatingTop10.rating = ratingValue;
-                                    player.OpponentRating.RatingTop10.maps = ratingMaps;
+                                    player.OpponentRating.RatingVsTop10.rating = ratingValue;
+                                    player.OpponentRating.RatingVsTop10.maps = ratingMaps;
                                     break;
                                 case "vs top 20 opponents":
-                                    player.OpponentRating.RatingTop20.rating = ratingValue;
-                                    player.OpponentRating.RatingTop20.maps = ratingMaps;
+                                    player.OpponentRating.RatingVsTop20.rating = ratingValue;
+                                    player.OpponentRating.RatingVsTop20.maps = ratingMaps;
                                     break;
                                 case "vs top 30 opponents":
-                                    player.OpponentRating.RatingTop30.rating = ratingValue;
-                                    player.OpponentRating.RatingTop30.maps = ratingMaps;
+                                    player.OpponentRating.RatingVsTop30.rating = ratingValue;
+                                    player.OpponentRating.RatingVsTop30.maps = ratingMaps;
                                     break;
                                 case "vs top 50 opponents":
-                                    player.OpponentRating.RatingTop50.rating = ratingValue;
-                                    player.OpponentRating.RatingTop50.maps = ratingMaps;
+                                    player.OpponentRating.RatingVsTop50.rating = ratingValue;
+                                    player.OpponentRating.RatingVsTop50.maps = ratingMaps;
                                     break;
                             }
                         }
@@ -254,7 +255,7 @@ namespace HLTVScrapperAPI.Services
                 //Navigate to Individual tab
                 try 
                 {
-                    IWebElement individualTab = driver.FindElement(By.LinkText("Individual"));
+                    IWebElement individualTab = Driver.FindElement(By.LinkText("Individual"));
                     individualTab.Click();
                 }
                 catch (NoSuchElementException e)

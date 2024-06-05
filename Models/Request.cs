@@ -1,31 +1,26 @@
 ﻿namespace HLTVScrapperAPI.Models
 {
-    public class ScrapeRequest
-    {
-
-    }
+    public class ScrapeRequest { }
 
     public class PlayerScrapeRequest : ScrapeRequest
     {
-        public string PlayerName { get; set; }
-        public string Filter { get; set; }
+        public string Name { get; set; }
+        public string TimeFrame { get; set; }
     }
 
     public class TeamScrapeRequest : ScrapeRequest
     {
-        public string TeamName { get; set; }
-        public string Filter { get; set; }
+        public string Name { get; set; }
+        public string TimeFrame { get; set; }
     }
 
     public class MatchScrapeRequest : ScrapeRequest 
     {
-        public string MatchName { get; set; }
+        public string TeamOne { get; set; }
+        public string TeamTwo { get; set; }
     }
 
-    public class EventScrapeRequest : ScrapeRequest 
-    { 
-    
-    }
+    public class EventScrapeRequest : ScrapeRequest { }
 
 
 }
