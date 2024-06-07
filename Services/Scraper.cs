@@ -7,20 +7,64 @@ namespace HLTVScrapperAPI.Services
 {
     public class Scraper
     {
-        protected UndetectedChromeDriver Driver { get; set; }
+        protected IWebDriver Driver { get; set; }
 
         List<string> ChromeProcessId { get; set; }
 
         public Scraper()
         {
+            Driver = this.CreateDriver();
+        }
+
+        public IWebDriver CreateDriver()
+        {
             string undetectedChromeDriverPath = "";
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 undetectedChromeDriverPath = @"C:/Users/Timothy/source/repos/HLTVScrapperAPI/bin/ChromeDriver/chromedriver.exe";
-            else 
+            else
                 undetectedChromeDriverPath = @"bin/ChromeDriver/chromedriver";
-            Driver = UndetectedChromeDriver.Create(driverExecutablePath: undetectedChromeDriverPath);
-            
+            return UndetectedChromeDriver.Create(driverExecutablePath: undetectedChromeDriverPath);
         }
+
+        public bool IsExist(string entity)
+        {
+            IWebDriver webDriver = this.CreateDriver();
+            Driver.Navigate().GoToUrl("https://www.hltv.org");
+            return true;
+        }
+
+        public bool IsTimeFrameValid(string timeFrame)
+        {
+            List<string> validTimeFrames = new List<string>
+            {
+                "All time",
+                "Last month",
+                "Last 3 months",
+                "Last 6 months",
+                "Last 12 months",
+                "2024",
+                "2023",
+                "2022",
+                "2021",
+                "2020",
+                "2019",
+                "2018",
+                "2017",
+                "2016",
+                "2015",
+                "2014",
+                "2013",
+                "2012"
+            };
+
+            if (validTimeFrames.Contains(timeFrame) || timeFrame == "")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         protected void Dispose() 
         {
             try

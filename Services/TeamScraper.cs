@@ -12,8 +12,8 @@ namespace HLTVScrapperAPI.Services
 
         public Team Scrape(TeamScrapeRequest request)
         {
-            try 
-            { 
+            try
+            {
                 Team team = new Team();
                 Driver.Navigate().GoToUrl($"https://www.hltv.org/stats");
                 WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(3));
@@ -402,16 +402,11 @@ namespace HLTVScrapperAPI.Services
                     {
                         try
                         {
-                            string name = item.FindElement(By.CssSelector("td.playerCol.bold a")).Text;
+                            string playername = item.FindElement(By.CssSelector("td.playerCol.bold a")).Text;
                             string maps = item.FindElement(By.CssSelector("td.statsDetail")).Text;
                             string rounds = item.FindElement(By.CssSelector("td.statsDetail.gtSmartphone-only")).Text;
                             string rating2 = item.FindElement(By.CssSelector(".ratingCol")).Text;
-                            TeamPlayer player = new TeamPlayer
-                            {
-                                name = name,
-                                rating = rating2,
-                                maps = maps
-                            };
+                            TeamPlayer player = new TeamPlayer(playername, rounds, rating2);
                             team.Roster.Add(player);
                         }
                         catch (NoSuchElementException e)
@@ -425,14 +420,15 @@ namespace HLTVScrapperAPI.Services
                     Debug.WriteLine(e.Message);
                 }
 
-            return team;
+                return team;
 
             }
             finally
             {
                 this.Dispose();
             }
-            
-       }
+        }
+
+       
     }
 }

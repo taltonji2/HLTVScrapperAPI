@@ -80,8 +80,9 @@ namespace HLTVScrapperAPI.Services
             }
         }
         //TODO: Enhance with filter for time-frame of last month three months etc
-        public Player Scrape(ScrapeRequest request)
+        public Player Scrape(PlayerScrapeRequest request)
         {
+
             try
             {
                 Driver.Navigate().GoToUrl($"https://www.hltv.org/stats");
@@ -110,7 +111,7 @@ namespace HLTVScrapperAPI.Services
                 {
                     IWebElement searchInput = Driver.FindElement(By.CssSelector("input[class='search-input navsearchinput tt-input']"));
                     searchInput.Click();
-                    searchInput.SendKeys("s1mple");
+                    searchInput.SendKeys(name);
                     Thread.Sleep(TimeSpan.FromSeconds(1));
                 }
                 catch (NoSuchElementException e)

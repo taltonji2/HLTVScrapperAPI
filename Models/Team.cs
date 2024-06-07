@@ -100,6 +100,12 @@
 
     public class TeamPlayer
     {
+        public TeamPlayer(string name = "", string rating = "", string maps = "")
+        {
+            this.name = name;
+            this.rating = rating;
+            this.maps = maps;
+        }
         public string name { get; set; }
         public string rating { get; set; }
         public string maps { get; set; }

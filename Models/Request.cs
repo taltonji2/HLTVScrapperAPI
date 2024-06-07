@@ -2,6 +2,7 @@
 {
     public class ScrapeRequest { }
 
+
     public class PlayerScrapeRequest : ScrapeRequest
     {
         public string Name { get; set; }
