@@ -12,7 +12,7 @@ namespace HLTVScrapperAPI.Controllers
 
         private struct TeamScrapeResponse
         {
-            public Team team { get; set; }
+            public Models.Team team { get; set; }
             public int HttpStatusCode { get; set; }
         }
 
@@ -29,25 +29,18 @@ namespace HLTVScrapperAPI.Controllers
         public IActionResult ScrapeTeam([FromBody] TeamScrapeRequest request)
         {
             TeamScraper teamScraper = new TeamScraper();
+            EntityExistScraper entityExistScrape = new EntityExistScraper();
 
             string name = request.Name;
-            bool teamexists = teamScraper.IsExist(name);
-            
             string timeFrame = request.TimeFrame;
-            bool validtimeframe = teamScraper.IsTimeFrameValid(timeFrame);
+            bool teamexists = entityExistScrape.Scrape(name);
+            bool validtimeframe = request.IsTimeFrameValid(timeFrame);
             
-            if (!validtimeframe)
-            {
-                return NotFound();
-            }
+            if (!validtimeframe || !teamexists) { return NotFound(); }
 
-            if (!teamexists)
-            {
-                return NotFound();
-            }
-            
             Team team = teamScraper.Scrape(request);
-            return Ok(team);
+            if (team != null) { return Ok(team); }
+            else { return StatusCode(500, "Internal server error"); }
         }
     }
 }

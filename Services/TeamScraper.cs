@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Xml.Linq;
 using HLTVScrapperAPI.Models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
@@ -49,10 +50,13 @@ namespace HLTVScrapperAPI.Services
 
                 try
                 {
-                    IWebElement teamItem = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[2]/div[1]/div[2]/div[2]/div/div/div/span/div/div/div/div[2]/div[1]/a[1]"));
-                    teamItem.Click();
-                    IWebElement currentContext = Driver.FindElement(By.XPath("/html/body/div[2]/div[8]/div[2]/div[1]/div[2]/div[10]/a"));
-                    currentContext.Click();
+                    IWebElement searchSuggestionElement = Driver.FindElement(By.CssSelector(".tt-suggestion.tt-selectable"));
+                    ReadOnlyCollection<IWebElement> searchSuggestions = searchSuggestionElement.FindElements(By.XPath("./child::*"));
+                    IWebElement teamSearchSuggestions = searchSuggestions[3];
+                    ReadOnlyCollection<IWebElement> teamSearchSuggestionsItems = teamSearchSuggestions.FindElements(By.XPath("./child::*"));
+                    IWebElement teamItem = teamSearchSuggestionsItems[0];
+                    IWebElement teamItemLink = teamItem.FindElement(By.CssSelector("a"));
+                    teamItemLink.Click();
                 }
                 catch (NoSuchElementException e)
                 {
@@ -406,7 +410,7 @@ namespace HLTVScrapperAPI.Services
                             string maps = item.FindElement(By.CssSelector("td.statsDetail")).Text;
                             string rounds = item.FindElement(By.CssSelector("td.statsDetail.gtSmartphone-only")).Text;
                             string rating2 = item.FindElement(By.CssSelector(".ratingCol")).Text;
-                            TeamPlayer player = new TeamPlayer(playername, rounds, rating2);
+                            TeamPlayer player = new TeamPlayer(playername, rating2, maps);
                             team.Roster.Add(player);
                         }
                         catch (NoSuchElementException e)
@@ -425,10 +429,8 @@ namespace HLTVScrapperAPI.Services
             }
             finally
             {
-                this.Dispose();
+                this.DisposeDriver();
             }
         }
-
-       
     }
 }

@@ -1,5 +1,7 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using SeleniumUndetectedChromeDriver;
+using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -9,7 +11,7 @@ namespace HLTVScrapperAPI.Services
     {
         protected IWebDriver Driver { get; set; }
 
-        List<string> ChromeProcessId { get; set; }
+        Hashtable ChromeProcesses { get; set; } = new Hashtable();
 
         public Scraper()
         {
@@ -26,46 +28,14 @@ namespace HLTVScrapperAPI.Services
             return UndetectedChromeDriver.Create(driverExecutablePath: undetectedChromeDriverPath);
         }
 
-        public bool IsExist(string entity)
+        public WebDriverWait CreateWaitDriver(int seconds)
         {
-            IWebDriver webDriver = this.CreateDriver();
-            Driver.Navigate().GoToUrl("https://www.hltv.org");
-            return true;
+            if (Driver == null) { IWebDriver Driver = this.CreateDriver(); }
+            WebDriverWait DriverWait = new WebDriverWait(Driver, TimeSpan.FromSeconds(seconds));
+            return DriverWait;
         }
 
-        public bool IsTimeFrameValid(string timeFrame)
-        {
-            List<string> validTimeFrames = new List<string>
-            {
-                "All time",
-                "Last month",
-                "Last 3 months",
-                "Last 6 months",
-                "Last 12 months",
-                "2024",
-                "2023",
-                "2022",
-                "2021",
-                "2020",
-                "2019",
-                "2018",
-                "2017",
-                "2016",
-                "2015",
-                "2014",
-                "2013",
-                "2012"
-            };
-
-            if (validTimeFrames.Contains(timeFrame) || timeFrame == "")
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        protected void Dispose() 
+        public void DisposeDriver() 
         {
             try
             {

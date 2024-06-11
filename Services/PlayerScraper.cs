@@ -82,7 +82,7 @@ namespace HLTVScrapperAPI.Services
         //TODO: Enhance with filter for time-frame of last month three months etc
         public Player Scrape(PlayerScrapeRequest request)
         {
-
+            string name = request.Name;
             try
             {
                 Driver.Navigate().GoToUrl($"https://www.hltv.org/stats");
@@ -269,7 +269,7 @@ namespace HLTVScrapperAPI.Services
             }
             finally
             {
-                this.Dispose();
+                this.DisposeDriver();
             }
         }
     }
