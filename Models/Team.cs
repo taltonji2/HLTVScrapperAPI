@@ -4,110 +4,63 @@
     {
         public Team ()
         {
-            Roster = new List<TeamPlayer>();
-
-            Ancient = new Map
-            {
-                WinRate = "",
-                RoundsPlayed = "",
-                RoundWinRateAfterFirstKill = "",
-                RoundWinRateAfterFirstDeath = "",
-                BiggestWin = "",
-                BiggestLoss = ""
-            };
-            Anubis = new Map
-            {
-                WinRate = "",
-                RoundsPlayed = "",
-                RoundWinRateAfterFirstKill = "",
-                RoundWinRateAfterFirstDeath = "",
-                BiggestWin = "",
-                BiggestLoss = ""
-            };
-            Inferno = new Map
-            {
-                WinRate = "",
-                RoundsPlayed = "",
-                RoundWinRateAfterFirstKill = "",
-                RoundWinRateAfterFirstDeath = "",
-                BiggestWin = "",
-                BiggestLoss = ""
-            };
-            Mirage = new Map
-            {
-                WinRate = "",
-                RoundsPlayed = "",
-                RoundWinRateAfterFirstKill = "",
-                RoundWinRateAfterFirstDeath = "",
-                BiggestWin = "",
-                BiggestLoss = ""
-            };
-            Nuke = new Map
-            {
-                WinRate = "",
-                RoundsPlayed = "",
-                RoundWinRateAfterFirstKill = "",
-                RoundWinRateAfterFirstDeath = "",
-                BiggestWin = "",
-                BiggestLoss = ""
-            };
-            Overpass = new Map
-            {
-                WinRate = "",
-                RoundsPlayed = "",
-                RoundWinRateAfterFirstKill = "",
-                RoundWinRateAfterFirstDeath = "",
-                BiggestWin = "",
-                BiggestLoss = ""
-            };
-            Vertigo = new Map
-            {
-                WinRate = "",
-                RoundsPlayed = "",
-                RoundWinRateAfterFirstKill = "",
-                RoundWinRateAfterFirstDeath = "",
-                BiggestWin = "",
-                BiggestLoss = ""
-            };
+            Summary = new TeamSummary ();
+            Roster = new List<Player> ();
+            RecentMatches = new List<Match> ();
+            UpcomingMatches = new List<Match> ();
+            UpcomingEvents = new List<Event> ();
         }
+        public TeamSummary Summary { get; set; }
+        public List<Player> Roster { get; set; }
+        public List<Match> RecentMatches { get; set; }
+        public List<Match> UpcomingMatches { get; set; }
+        public List<Event> UpcomingEvents { get; set; }
+        public List<Player> Players { get; set; }
+        public int MapsPlayed { get; set; }
+    }
+
+    public class TeamSummary
+    {
+        public string Name { get; set; }
+        public Coach Coach { get; set; }
+        public string Country { get; set; }
+        public int Rank { get; set; }
+        public int WeeksInTop30Core { get; set; }
+        public double AveragePlayerAge { get; set; }
+        public List<(string, string)> Socials { get; set; }
+    }
+
+    public class Coach
+    {
         public string Name { get; set; }
         public string Country { get; set; }
-        public string Rank { get; set; }
-        public List<TeamPlayer> Roster { get; set; }
-        public string Coach { get; set; }
-        public string MapsPlayed { get; set; }
-        public string WinRate { get; set; }
-        public string RoundsPlayed { get; set; }
-        public string KD { get; set; }
-        public Map Anubis { get; set; }
-        public Map Ancient { get; set; }
-        public Map Inferno { get; set; }
-        public Map Mirage { get; set; }
-        public Map Nuke { get; set; }
-        public Map Overpass { get; set; }
-        public Map Vertigo { get; set; }
+        public string TimeOnTeam { get; set; }
+        public int MapsCoached { get; set; }
+        public int Trophies { get; set; }
+        public double Winrate { get; set; }
+    }
+
+    public class TeamStatistics
+    {
+        public List<string> LastFiveMatches { get; set; }
     }
 
     public class Map
     {
-        public string WinRate { get; set; }
-        public string RoundsPlayed { get; set; }
-        public string RoundWinRateAfterFirstKill { get; set; }
-        public string RoundWinRateAfterFirstDeath { get; set; }
-        public string BiggestWin { get; set; }
-        public string BiggestLoss { get; set; }
+        public int Wins { get; set; }
+        public int Losses { get; set; }
+        public int Draws { get; set; }
+        public double RoundWinrateAfterGettingFirstKill { get; set; }
+        public double RoundWinrateAfterFirstDeath { get; set; }
+        public double PistolRoundWinrate { get; set; }
     }
 
-    public class TeamPlayer
+    public class Event
     {
-        public TeamPlayer(string name = "", string rating = "", string maps = "")
-        {
-            this.name = name;
-            this.rating = rating;
-            this.maps = maps;
-        }
-        public string name { get; set; }
-        public string rating { get; set; }
-        public string maps { get; set; }
+        public string Name { get; set; }
+        public string Location { get; set; }
+        public DateTime Date { get; set; }
+        public string PrizePool { get; set; }
+        public List<string> Teams { get; set; }
     }
 }

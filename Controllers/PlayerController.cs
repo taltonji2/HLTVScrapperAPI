@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HLTVScrapperAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/player")]
     public class PlayerController : ControllerBase
     {
         private readonly ILogger<PlayerController> _logger;
@@ -15,16 +15,18 @@ namespace HLTVScrapperAPI.Controllers
             _logger = logger;
         }
 
-        [HttpPost("/api/player")]
-        [ProducesResponseType(200)]
+        [HttpGet("scrape")]
         [ProducesResponseType(500)]
+        [ProducesResponseType(422)]
         [ProducesResponseType(404)]
-        [Produces("application/json")]
-        public IActionResult ScrapePlayer([FromBody] PlayerScrapeRequest request)
+        [ProducesResponseType(200)]
+        public IActionResult GetByNameAndTimeframe([FromQuery] string name)
         {
             PlayerScraper playerScraper = new PlayerScraper();
-            Player player = playerScraper.Scrape(request: request);
-            return Ok(player);
+          
+            PlayerResult result = playerScraper.Scrape(name);
+            if (result.Success) return Ok(result.Player);
+            else return StatusCode(500, result.Errors);
         }
     }
 }

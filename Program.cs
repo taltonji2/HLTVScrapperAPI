@@ -1,4 +1,8 @@
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.IO;
+using System.Net;
 
 namespace HLTVScrapperAPI
 {

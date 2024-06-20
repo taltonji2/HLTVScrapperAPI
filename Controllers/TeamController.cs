@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HLTVScrapperAPI.Controllers 
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/team")]
     public class TeamController : ControllerBase
     {
         private readonly ILogger<TeamController> _logger;
@@ -21,26 +21,18 @@ namespace HLTVScrapperAPI.Controllers
             _logger = logger;
         }
 
-        [HttpPost("/api/team")]
-        [ProducesResponseType(200)]
+        [HttpGet("scrape")]
         [ProducesResponseType(500)]
+        [ProducesResponseType(422)]
         [ProducesResponseType(404)]
-        [Produces("application/json")]
-        public IActionResult ScrapeTeam([FromBody] TeamScrapeRequest request)
+        [ProducesResponseType(200)]
+        public IActionResult GetByNameAndTimeframe([FromQuery] string name)
         {
             TeamScraper teamScraper = new TeamScraper();
-            EntityExistScraper entityExistScrape = new EntityExistScraper();
 
-            string name = request.Name;
-            string timeFrame = request.TimeFrame;
-            bool teamexists = entityExistScrape.Scrape(name);
-            bool validtimeframe = request.IsTimeFrameValid(timeFrame);
-            
-            if (!validtimeframe || !teamexists) { return NotFound(); }
-
-            Team team = teamScraper.Scrape(request);
-            if (team != null) { return Ok(team); }
-            else { return StatusCode(500, "Internal server error"); }
+            TeamResult result = teamScraper.Scrape(name);
+            if (result.Success) return Ok(result.Team);
+            else return StatusCode(500, result.Errors);
         }
     }
 }
