@@ -49,7 +49,7 @@ namespace HLTVScrapperAPI.Services
             team.Summary.WeeksInTop30Core = teamWeeksInTop30Core;
 
             var teamCoach = profileTeamStats[2].FindElement(By.CssSelector("span.bold.a-default")).Text.Trim().Replace("'", string.Empty);
-            team.Coach.Name = teamCoach;
+            team.Summary.Coach.Name = teamCoach;
 
             var socials = Driver.FindElement(By.CssSelector("div.socialMediaButtons")).FindElements(By.TagName("a")).ToList();
             socials.ForEach(social => team.Summary.Socials.Add((social.GetAttribute("href").Split(".")[1], social.GetAttribute("href"))));
