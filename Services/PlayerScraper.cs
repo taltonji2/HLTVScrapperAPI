@@ -1,10 +1,7 @@
 ﻿using OpenQA.Selenium;
-using System.Text.RegularExpressions;
-using System.Collections.ObjectModel;
 using HLTVScrapperAPI.Models;
-using OpenQA.Selenium.Support.UI;
 using System.Diagnostics;
-using HLTVScrapperAPI.Controllers;
+using HLTVScrapperAPI.Models.Player;
 
 namespace HLTVScrapperAPI.Services
 {
@@ -12,13 +9,13 @@ namespace HLTVScrapperAPI.Services
     {
         public PlayerScraper() : base() {}
 
-        public ScrapeResult<Player> Scrape(string name)
+        public ScrapeResult<Player> ScrapePlayer(string name)
         {
             Player player = new Player();
             ScrapeResult<Player> result = new ScrapeResult<Player>(player);
             try
             {
-                this.SearchEntity("player", name);
+                this.SearchScrapeObject("player", name);
                 string playerUrl = Driver.Url.Replace("#tab-infoBox", "");
                 this.ScrapeSummaryInfo(player);
                 this.ScrapePlayerStatistics(player);
@@ -53,7 +50,6 @@ namespace HLTVScrapperAPI.Services
             }
             return result;
         }
-
         private void ScrapeSummaryInfo (Player player)
         {
             var nickName = Driver.FindElement(By.CssSelector("h1.playerNickname")).Text;
@@ -77,7 +73,6 @@ namespace HLTVScrapperAPI.Services
             var socials = Driver.FindElement(By.CssSelector("div.socialMediaButtons")).FindElements(By.TagName("a")).ToList();
             socials.ForEach(social => player.Summary.Socials.Add((social.GetAttribute("href").Split(".")[1], social.GetAttribute("href"))));
         }
-
         private void ScrapePlayerStatistics(Player player)
         {
             var statisticsContainer = Driver.FindElement(By.CssSelector("div.playerpage-container"));
@@ -102,8 +97,6 @@ namespace HLTVScrapperAPI.Services
             var roundsContributed = statistics[5].FindElement(By.CssSelector("span.statsVal")).Text;
             player.Statistics.RoundsContributed = roundsContributed != null ? Double.Parse(roundsContributed) : 0;
         }
-
-
         private void ScrapePlayerTeamStats(Player player)
         {
             var teamStats = Driver.FindElements(By.CssSelector("div.highlighted-stat"));
@@ -124,7 +117,6 @@ namespace HLTVScrapperAPI.Services
                         break;
                 }
             }
-
             var teamBreakdowns = Driver.FindElements(By.CssSelector("tr.team"));
             foreach (var item in teamBreakdowns)
             {
@@ -140,8 +132,7 @@ namespace HLTVScrapperAPI.Services
                     string endMonth = end.Split(" ")[0];
                     string endYear = end.Split(" ")[1];
 
-
-                    PlayerTeamStats.TeamBreakdown team = new PlayerTeamStats.TeamBreakdown
+                    TeamStats.TeamBreakdown team = new TeamStats.TeamBreakdown
                     {
                         TeamName = teamName,
                         Start = new DateTime(int.Parse(startYear), int.Parse(startMonth), 1),
@@ -155,10 +146,8 @@ namespace HLTVScrapperAPI.Services
 
                     player.TeamStatistics.TeamsBreakdown.Add(team);
                 }
-                
             }
         }
-
         private void ScrapePlayerAchievements(Player player)
         {
             var majorAchievementStats = Driver.FindElements(By.CssSelector("div.highlighted-stat"));
@@ -184,7 +173,7 @@ namespace HLTVScrapperAPI.Services
                 var team = item.FindElement(By.CssSelector("td.team-name-cell")).FindElement(By.CssSelector("span.team-name")).Text;
                 var tournament = item.FindElement(By.CssSelector("td.tournament-name-cell")).FindElement(By.TagName("a")).Text;
 
-                PlayerEventAchievement majorAchievement = new PlayerEventAchievement
+                EventAchievement majorAchievement = new EventAchievement
                 {
                     Placement = placement,
                     Team = team,
@@ -220,7 +209,7 @@ namespace HLTVScrapperAPI.Services
                 var team = item.FindElement(By.CssSelector("td.team-name-cell")).FindElement(By.CssSelector("span.team-name")).Text;
                 var tournament = item.FindElement(By.CssSelector("td.tournament-name-cell")).FindElement(By.TagName("a")).Text;
 
-                PlayerEventAchievement lanAchievement = new PlayerEventAchievement
+                EventAchievement lanAchievement = new EventAchievement
                 {
                     Placement = placement,
                     Team = team,
@@ -230,7 +219,6 @@ namespace HLTVScrapperAPI.Services
                 player.Achievements.LANAchievements.Add(lanAchievement);
             }
         }
-
         private void ScrapePlayerTrophies(Player player)
         {
             var trophies = Driver.FindElements(By.CssSelector("tr.trophy-row"));
@@ -240,7 +228,7 @@ namespace HLTVScrapperAPI.Services
                 var rank = item.FindElement(By.CssSelector("div.trophy-event")).FindElement(By.TagName("a")).Text;
                 rank = rank.Split(" ")[0].Replace("#", "");
 
-                PlayerAchievements.Top20Rank top20Rank = new PlayerAchievements.Top20Rank
+                Achievements.Top20Rank top20Rank = new Achievements.Top20Rank
                 {
                     year = int.Parse(year),
                     rank = int.Parse(rank),

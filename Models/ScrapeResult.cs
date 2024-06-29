@@ -14,6 +14,5 @@ namespace HLTVScrapperAPI.Models
         public bool Success { get; set; }
         public List<string> Errors { get; set; }
         public T ScrapeObject { get; set; }
-
     }
 }

@@ -43,7 +43,7 @@ namespace HLTVScrapperAPI.Services
             WebDriverWait DriverWait = new WebDriverWait(Driver, TimeSpan.FromSeconds(seconds));
             return DriverWait;
         }
-        public void SearchEntity(string type, string name)
+        public void SearchScrapeObject(string type, string name)
         {
             HashSet<string> types = new HashSet<string> { "player", "team", "article" };
             if (!types.Contains(type)) { throw new Exception("Invalid type"); }

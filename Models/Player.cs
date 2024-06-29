@@ -1,10 +1,10 @@
-namespace HLTVScrapperAPI.Models
+namespace HLTVScrapperAPI.Models.Player
 {
     public class Player
     {
         public Player()
         {
-            Summary = new PlayerSummary
+            Summary = new Summary
             {
                 NickName = "",
                 County = "",
@@ -18,7 +18,7 @@ namespace HLTVScrapperAPI.Models
                 Socials = new List<(string, string)>()
             };
 
-            Statistics = new PlayerStatistics
+            Statistics = new Statistics
             {
                 Rating2 = null,
                 KillsPerRound = null,
@@ -27,31 +27,31 @@ namespace HLTVScrapperAPI.Models
                 DeathsPerRound = null,
                 RoundsContributed = null
             };
-            TeamStatistics = new PlayerTeamStats
+            TeamStatistics = new TeamStats
             {
                 DaysInCurrentTeam = 0,
                 DaysInTeams = 0,
                 Teams = 0,
-                TeamsBreakdown = new List<PlayerTeamStats.TeamBreakdown>()
+                TeamsBreakdown = new List<TeamStats.TeamBreakdown>()
             };
 
-            Achievements = new PlayerAchievements
+            Achievements = new Achievements
             {
                 MajorsWon = 0,
                 MajorsPlayed = 0,
                 LANsWon = 0,
                 LANsPlayed = 0,
-                LANAchievements = new List<PlayerEventAchievement>(),
-                MajorAchievements = new List<PlayerEventAchievement>(),
-                Top20Achievements = new List<PlayerAchievements.Top20Rank>()
+                LANAchievements = new List<EventAchievement>(),
+                MajorAchievements = new List<EventAchievement>(),
+                Top20Achievements = new List<Achievements.Top20Rank>()
             };
         }
-        public PlayerSummary Summary { get; set; }
-        public PlayerStatistics Statistics { get; set; }
-        public PlayerTeamStats TeamStatistics { get; set; }
-        public PlayerAchievements Achievements { get; set; }
+        public Summary Summary { get; set; }
+        public Statistics Statistics { get; set; }
+        public TeamStats TeamStatistics { get; set; }
+        public Achievements Achievements { get; set; }
     }
-    public class PlayerSummary
+    public class Summary
     {
         public string NickName { get; set; }
         public string County { get; set; }
@@ -64,7 +64,7 @@ namespace HLTVScrapperAPI.Models
         public double? RatingCurrentTeamPeriod { get; set; }
         public List<(string, string)> Socials { get; set; }
     }
-    public class PlayerStatistics
+    public class Statistics
     {
         public double? Rating2 { get; set; }
         public double? KillsPerRound { get; set; }
@@ -73,7 +73,7 @@ namespace HLTVScrapperAPI.Models
         public double? DeathsPerRound { get; set; }
         public double? RoundsContributed { get; set; }
     }
-    public class PlayerTeamStats
+    public class TeamStats
     {
         public class TeamBreakdown { public string TeamName; public DateTime Start; public DateTime? End; }
         public int DaysInCurrentTeam { get; set; }
@@ -81,19 +81,19 @@ namespace HLTVScrapperAPI.Models
         public int Teams { get; set; }
         public List<TeamBreakdown> TeamsBreakdown { get; set; }
     }
-    public class PlayerAchievements
+    public class Achievements
     {
         public class Top20Rank { public int year; public int rank; }
         public int MajorsWon { get; set; }
         public int MajorsPlayed { get; set; }
         public int LANsWon { get; set; }
         public int LANsPlayed { get; set; }
-        public List<PlayerEventAchievement> LANAchievements { get; set; }
-        public List<PlayerEventAchievement> MajorAchievements { get; set; }
+        public List<EventAchievement> LANAchievements { get; set; }
+        public List<EventAchievement> MajorAchievements { get; set; }
         public List<Top20Rank> Top20Achievements { get; set; }
 
     }
-    public class PlayerEventAchievement
+    public class EventAchievement
     {
         public string Placement { get; set; }
         public string Tournament { get; set; }
