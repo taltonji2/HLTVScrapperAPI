@@ -53,16 +53,18 @@ namespace HLTVScrapperAPI.Services
             var teamCountry = Driver.FindElement(By.CssSelector("img.flag")).GetAttribute("alt");
             team.Summary.Country = teamCountry;
 
-            ReadOnlyCollection<IWebElement> profileTeamStats = Driver.FindElements(By.CssSelector("div.profile-team-stat"));
+            List<IWebElement> profileTeamStats = Driver.FindElements(By.CssSelector("div.profile-team-stat")).ToList();
+            
             var teamRank = profileTeamStats[0].FindElement(By.CssSelector("span.right")).Text;
             if (!teamRank.Equals("-"))
             {
-                team.Summary.Rank = int.Parse(teamRank);
+                team.Summary.Rank = int.Parse(teamRank.Replace("#",""));
             }
             var teamWeeksInTop30Core = int.Parse(profileTeamStats[1].FindElement(By.TagName("span")).Text.Trim());
             team.Summary.WeeksInTop30Core = teamWeeksInTop30Core;
 
-            var teamCoach = profileTeamStats[2].FindElement(By.CssSelector("span.bold.a-default")).Text.Trim().Replace("'", string.Empty);
+            var coach = profileTeamStats.Find(stat => stat.FindElement(By.TagName("b")).Text == "Coach");
+            var teamCoach = coach.FindElement(By.CssSelector("a.a-reset.right")).Text.Trim().Split("'")[1].Replace("'", string.Empty);
             team.Summary.Coach.NickName = teamCoach != null ? teamCoach : "";
 
             var socials = Driver.FindElement(By.CssSelector("div.socialMediaButtons")).FindElements(By.TagName("a")).ToList();
